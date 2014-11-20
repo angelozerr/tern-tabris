@@ -95,7 +95,22 @@
               "!type": "fn() -> [+Widget]",
               "!doc": "Returns the list of children of this widget. The returned array is a copy and can safely be manipulated.",
               "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#children"
-            },            
+            }, 
+            "on": {
+              "!type": "fn(type: string, listener: fn(), context?: ?) -> !this" ,
+              "!doc": "Binds a listener function to the widget. The listener will be invoked whenever an event of the given event type is fired.",
+              "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context"
+            },
+            "off": {
+              "!type": "fn(type?: string, listener?: fn(), context?: ?) -> !this",
+              "!doc": "Removes a previously-bound listener function from a widget. If no context is specified, all of the versions of the listener with different contexts will be removed. If no listener is specified, all listeners for the event will be removed. If no type is specified, callbacks for all events will be removed. Returns the widget itself.",
+              "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context"
+            },      
+            "trigger": {
+              "!type": "fn(type?: string, param?: ?) -> !this",
+              "!doc": "Programmatically invokes all listeners for the given event type with a given set of parameters. Returns the widget itself.",
+              "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#triggertype-param-"
+            },             
             "dispose": {
               "!type": "fn()",
               "!doc": "Disposes of the widget, destroys all of its children widgets and triggers a dispose event.",
@@ -114,7 +129,7 @@
 	      "!type": "fn()",
 	      "!doc": "TODO",
 	      "prototype": {
-	        "!proto": "Widget.prototype"
+	        "!proto": "Composite.prototype"
 	      }
 	    },
 	    "Button": {
