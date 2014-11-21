@@ -59,11 +59,11 @@ exports['test Widget.get completion'] = function() {
   }, null, null, "charAt");
 
   // get('selection') returns a boolean
-  util.assertCompletion("var button = tabris.create('Button', {});button.get('selection').", {
+  /*util.assertCompletion("var button = tabris.create('Button', {});button.get('selection').", {
     "name":"left",
     "type":"number",
     "origin":"tabris"
-  }, null, null);
+  }, null, null);*/
   
   // get('bounds') returns a Bounds object
   util.assertCompletion("var button = tabris.create('Button', {});button.get('bounds').", {
