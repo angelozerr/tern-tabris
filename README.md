@@ -62,3 +62,4 @@ The basic structure of the project is given in the following way:
 
 * `tabris.js` the tern plugin.
 * `demos/` demos with tabris tern plugin which use CodeMirror.
+* `test` test of the tern plugin.
