@@ -6,15 +6,17 @@
 
 ## Demo
 
-You can see demo with CodeMirror (inside Web Browser) [demos/tabris.html](https://github.com/angelozerr/tern-tabris/blob/master/demos/tabris.html) :
+You can play with [online demo](http://codemirror-java.opensagres.eu.cloudbees.net/codemirror-javascript/demo/tabris.html) which uses CodeMirror ((inside Web Browser).
+
+You can see demo in this git ptoject with CodeMirror in  [demos/tabris.html](https://github.com/angelozerr/tern-tabris/blob/master/demos/tabris.html) :
 
 Here a screenshot with completion for tabrision object :
  
-![CodeMirror & Terntabris](https://github.com/angelozerr/tern-tabris/wiki/images/TerntabrisWithCodeMirror.png)
+![CodeMirror & TernTabris](https://github.com/angelozerr/tern-tabris/wiki/images/TernTabrisWithCodeMirror.png)
 
 Here a screenshot with completion for Response instance:
 
-![CodeMirror & Terntabris Response](https://github.com/angelozerr/tern-tabris/wiki/images/TerntabrisResponseWithCodeMirror.png)
+![CodeMirror & Terntabris Response](https://github.com/angelozerr/tern-tabris/wiki/images/TernTabrisResponseWithCodeMirror.png)
 
 If you wish to use Eclipse as IDE, see Eclipse support for [tabris](https://github.com/angelozerr/tern.java/wiki/Tern-&-tabris-support).
 
