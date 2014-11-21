@@ -27,7 +27,6 @@
   <script src="resources/ternjs/tern/lib/comment.js"></script>
   <script src="resources/ternjs/tern/lib/infer.js"></script>
   
-  <script src="resources/ternjs/tern/plugin/node.js"></script>
   <script src="../tabris.js"></script>
   
   <!-- Official CodeMirror Tern addon -->
@@ -66,6 +65,7 @@
 });
 
 var selectionHandler = function() {
+  this. // here Ctrl+Space shows methods of Widget (animation, etc)
   console.log("Button selected!");
 };
 button.on("selection", selectionHandler);

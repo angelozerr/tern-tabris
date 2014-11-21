@@ -1,6 +1,6 @@
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") { // CommonJS
-    return mod(require.main.require("../lib/infer"), require.main.require("../lib/tern"));
+    return mod(require("tern/lib/infer"), require("tern/lib/tern"));
   }
   if (typeof define == "function" && define.amd) // AMD
     return define([ "tern/lib/infer", "tern/lib/tern" ], mod);
@@ -25,6 +25,8 @@
 	switch(name) {
 	  case 'text':
 		return cx.protos.String;
+	  case 'selection':
+		return cx.protos.Boolean;		
 	  case 'bounds':
 	    return locals['Bounds'];		
 	}    
@@ -97,12 +99,14 @@
               "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#children"
             }, 
             "on": {
-              "!type": "fn(type: string, listener: fn(), context?: ?) -> !this" ,
+              "!type": "fn(type: string, listener: fn(), context?: ?) -> !this",
+              "!effects": ["call !1 this=!this"],
               "!doc": "Binds a listener function to the widget. The listener will be invoked whenever an event of the given event type is fired.",
               "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context"
             },
             "off": {
               "!type": "fn(type?: string, listener?: fn(), context?: ?) -> !this",
+              "!effects": ["call !1 this=!this"],
               "!doc": "Removes a previously-bound listener function from a widget. If no context is specified, all of the versions of the listener with different contexts will be removed. If no listener is specified, all listeners for the event will be removed. If no type is specified, callbacks for all events will be removed. Returns the widget itself.",
               "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context"
             },      
@@ -129,7 +133,13 @@
 	      "!type": "fn()",
 	      "!doc": "TODO",
 	      "prototype": {
-	        "!proto": "Composite.prototype"
+	        "!proto": "Composite.prototype",
+	        "open": {
+              "!type": "fn()",              
+            },
+            "close": {
+              "!type": "fn()",              
+            }
 	      }
 	    },
 	    "Button": {
