@@ -148,7 +148,14 @@
 	      "prototype": {
 	        "!proto": "Widget.prototype"
 	      }
-	    }
+	    },
+	    "Label": {
+	      "!type": "fn()",
+	      "!doc": "A widget to display a text. For images, use ImageView.",
+	      "prototype": {
+	        "!proto": "Widget.prototype"
+	      }
+	    }	    
 	  },
 	  "tabris": {
 		"load": {
