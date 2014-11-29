@@ -62,18 +62,12 @@
 	<p>See <a href="https://github.com/angelozerr/tern-tabris">https://github.com/angelozerr/tern-tabris</a> for more infos.</p>  
     <form><textarea id="code" name="code">tabris.load(function() {
 
-  var page = tabris.create("Page", {
-    title: "Label - Markup",
-    topLevel: true
-  });
-
-  var markup = "<b>bold</b>, <i>italic</i>, <big>big</big>, <small>small</small>, " +
-               "<ins>ins</ins>, <del>del</del>, <a>link</a>";
-
-  tabris.create("Label", {
+  var button = tabris.create("Button", {
     layoutData: {left: 10, top: 10, right: 10},
     text: "Label with markup not enabled:\n" + markup,
-  }).appendTo(page);
+  });
+  
+  button.get('text').
 
   tabris.create("Label", {
     layoutData: {left: 10, top: [page.children().pop(), 30], right: 10},
