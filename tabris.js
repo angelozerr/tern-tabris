@@ -8,19 +8,24 @@
 })(function(infer, tern) {
   "use strict";
 
+  var defaultRules = {
+    "UnknownTabrisType" : {"severity" : "error"},
+    "UnknownTabrisProperty" : {"severity" : "error"}
+  };
+  
   function validateTabrisType(node, addMessage) {
     var argNode = node.arguments[0];
     if (argNode) {
       var cx = infer.cx(), types = cx.definitions.tabris["!types"], typeName = argNode.value;
-      if (!types.hasProp(typeName)) addMessage(argNode, "Unknown tabris type '" + typeName + "'");
+      if (!types.hasProp(typeName)) addMessage(argNode, "Unknown tabris type '" + typeName + "'", defaultRules.UnknownTabrisType.severity);
     }
   };
   
   function validateTabrisProperty(node, addMessage) {
     var argNode = node.arguments[0];
     if (argNode) {
-      var cx = infer.cx(), proxyType = argNode._tabris.proxyType, propertyName = argNode.value;
-      if (!getPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'");
+      var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, propertyName = argNode.value;
+      if (!getPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
     }
   };
   
