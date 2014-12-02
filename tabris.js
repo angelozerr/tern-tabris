@@ -10,22 +10,17 @@
 
   var defaultRules = {
     "UnknownTabrisType" : {"severity" : "error"},
-    "UnknownTabrisProperty" : {"severity" : "error"}
+    "UnknownTabrisProperty" : {"severity" : "error"},
+    "UnknownTabrisEvent" : {"severity" : "error"}
   };
+  
+  // tabris.create(
   
   function validateTabrisType(node, addMessage) {
     var argNode = node.arguments[0];
     if (argNode) {
       var cx = infer.cx(), types = cx.definitions.tabris["!types"], typeName = argNode.value;
       if (!types.hasProp(typeName)) addMessage(argNode, "Unknown tabris type '" + typeName + "'", defaultRules.UnknownTabrisType.severity);
-    }
-  };
-  
-  function validateTabrisProperty(node, addMessage) {
-    var argNode = node.arguments[0];
-    if (argNode) {
-      var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, propertyName = argNode.value;
-      if (!getPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
     }
   };
   
@@ -38,7 +33,17 @@
     if (tabrisType) return new infer.Obj(tabrisType.getType().getProp("prototype").getType());    
     return infer.ANull;
   });
-   
+
+  // widget.get(
+  
+  function validateTabrisProperty(node, addMessage) {
+    var argNode = node.arguments[0];
+    if (argNode) {
+      var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, propertyName = argNode.value;
+      if (!getPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
+    }
+  };
+  
   function getObjectProperties(proto) {
     var cx = infer.cx(), locals = cx.definitions.tabris;    
     var objectName = proto.name, index = objectName.indexOf("!types.");
@@ -68,6 +73,52 @@
 	  if (_self.hasProp) _self.hasProp("get").getFunctionType().lint = validateTabrisProperty;
 	  if (propertyType) return propertyType.getType();
 	  return infer.ANull;
+  });
+
+  // widget.on(
+  
+  function getEventProperties(proto) {
+    var cx = infer.cx(), locals = cx.definitions.tabris;    
+    var objectName = proto.name, index = objectName.indexOf("!types.");
+    if (index == 0) objectName = objectName.substring("!types.".length, objectName.length);
+    objectName = objectName.substring(0, proto.name.indexOf('.')) + 'Events';
+    return locals["!events"].hasProp(objectName);
+  }
+  
+  function getEventType(widgetType, eventName) {
+    if (!(widgetType)) return null;
+    var proto = widgetType.proto, eventType = null;
+    while(proto) {
+      var objectType = getEventProperties(proto);
+      if (objectType && objectType.getType) eventType = objectType.getType().hasProp(eventName)
+      if (eventType) return eventType;
+      proto = proto.proto;
+    }
+    return null;
+  }
+  
+  function validateTabrisEventType(node, addMessage) {
+    var argNode = node.arguments[0];
+    if (argNode) {
+      var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, eventName = argNode.value;
+      if (!getEventType(proxyType, eventName)) addMessage(argNode, "Unknown tabris event '" + eventName + "'", defaultRules.UnknownTabrisEvent.severity);
+    }
+  };
+  
+  infer.registerFunction("tabris_Proxy_eventtype", function(_self, args, argNodes) {
+    if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
+      return infer.ANull;
+    
+    var proxyType = _self.getType();
+    argNodes[0]._tabris = {"type" : "tabris_Proxy_eventtype", "proxyType" : proxyType};
+    if (_self.hasProp) {
+      var fn = _self.hasProp("on");
+      if (!fn) fn = _self.hasProp("off");
+      if (!fn) fn = _self.hasProp("trigget");      
+      if (fn) fn.getFunctionType().lint = validateTabrisEventType;
+    }
+    //if (propertyType) return propertyType.getType();
+    //return infer.ANull;
   });
   
   tern.registerPlugin("tabris", function(server, options) {    
@@ -131,11 +182,19 @@
           case "tabris_Proxy_get":
             var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
             while(proto) {
-              var objType = getObjectProperties(proto), propertyType;
+              var objType = getObjectProperties(proto);
               if (objType) infer.forAllPropertiesOf(objType, gather);
               proto = proto.proto;
             }
             break;
+          case "tabris_Proxy_eventtype":
+            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
+            while(proto) {
+              var objType = getEventProperties(proto);
+              if (objType) infer.forAllPropertiesOf(objType, gather);
+              proto = proto.proto;
+            }
+            break;                        
           case "tabris_create":
             var types = cx.definitions.tabris["!types"];
             overrideType = "string";
@@ -436,6 +495,41 @@
           }
         }
       },
+      "!events": {
+        "ActionEvents": {
+          "selection": {
+            "!doc": "Fired when the action is invoked."
+          }
+        },        
+        "WidgetEvents": {
+          "touchstart": {
+            "!doc": "Fired when a widget is touched. See [Touch Events](touch-events)."
+          },
+          "touchmove": {
+            "!doc": "Fired repeatedly while swiping across the screen. See [Touch Events](touch-events)."
+          },
+          "touchend": {
+            "!doc": "Fired when a touch ends on the same widget than it started on. See [Touch Events](touch-events)."
+          },
+          "touchcancel": {
+            "!doc": "Fired instead of touchend when the touch ends on another widget than it started on. See [Touch Events](touch-events)."
+          },
+          "longpress": {
+            "!doc": "Fired after pressing a widget for a specific amount of time (about a second). See [Touch Events](touch-events)."
+          },
+          "change:bounds": {
+            "!doc": "Fired when the widget's size or position has changed."
+          },
+          "dispose": {
+            "!doc": "Fired when the widget is about to be disposed."
+          }
+        },
+        "ButtonEvents": {
+          "selection": {
+            "!doc": "Fired when the button is pressed."
+          }
+        }
+      },
       "!types": {
         "Action" : {
           "!type" : "fn()",
@@ -466,39 +560,40 @@
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#animateproperties-options"
             },
             "appendTo" : {
-              "!type" : "fn(parent: +Widget) -> !this",
+              "!type" : "fn(parent: +!types.Widget) -> !this",
               "!doc" : "Appends the widget to a parent. If the widget already has a parent, it is deregistered from the actual parent and registered with the new one. Returns the widget itself.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#appendtoparent"
             },
             "append" : {
-              "!type" : "fn(child: +Widget) -> !this",
+              "!type" : "fn(child: +!types.Widget) -> !this",
               "!doc" : "Appends one or more child widget to this widget. This method is equivalent to calling appendTo on every child, e.g. parent.append(child1, child2) is a short cut for calling child1.appendTo(parent) and child2.appendTo(parent). Returns the widget itself.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#appendchild-child-"
             },
             "parent" : {
-              "!type" : "fn() -> +Widget",
+              "!type" : "fn() -> +!types.Widget",
               "!doc" : "Returns the widget's parent.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#parent"
             },
             "children" : {
-              "!type" : "fn() -> [+Widget]",
+              "!type" : "fn() -> [+!types.Widget]",
               "!doc" : "Returns the list of children of this widget. The returned array is a copy and can safely be manipulated.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#children"
             },
             "on" : {
               "!type" : "fn(type: string, listener: fn(), context?: ?) -> !this",
-              "!effects" : [ "call !1 this=!this" ],
+              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Binds a listener function to the widget. The listener will be invoked whenever an event of the given event type is fired.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context"
             },
             "off" : {
               "!type" : "fn(type?: string, listener?: fn(), context?: ?) -> !this",
-              "!effects" : [ "call !1 this=!this" ],
+              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Removes a previously-bound listener function from a widget. If no context is specified, all of the versions of the listener with different contexts will be removed. If no listener is specified, all listeners for the event will be removed. If no type is specified, callbacks for all events will be removed. Returns the widget itself.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context"
             },
             "trigger" : {
               "!type" : "fn(type?: string, param?: ?) -> !this",
+              "!effects" : [ "custom tabris_Proxy_eventtype"],
               "!doc" : "Programmatically invokes all listeners for the given event type with a given set of parameters. Returns the widget itself.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#triggertype-param-"
             },
