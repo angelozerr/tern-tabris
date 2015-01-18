@@ -338,7 +338,6 @@
         } else if (!type) {
           parseType(inner["!type"], innerPath, null, true).propagate(known);
           type = known.getType(false);
-          if (type instanceof infer.Obj) copyInfo(inner, type);
         } else continue;
         if (inner["!doc"]) known.doc = inner["!doc"];
         if (inner["!url"]) known.url = inner["!url"];
@@ -447,6 +446,26 @@
     var result = new infer.AVal;
     if (args[0]) args[0].propagate(new IsCreated(0, result, args[1]));
     return result;
+  });
+
+  var PropSpec = infer.constraint("target", {
+    addType: function(tp) {
+      if (!(tp instanceof infer.Obj)) return;
+      if (tp.hasProp("value"))
+        tp.getProp("value").propagate(this.target);
+      else if (tp.hasProp("get"))
+        tp.getProp("get").propagate(new infer.IsCallee(infer.ANull, [], null, this.target));
+    }
+  });
+
+  infer.registerFunction("Object_defineProperty", function(_self, args, argNodes) {
+    if (argNodes && argNodes.length >= 3 && argNodes[1].type == "Literal" &&
+        typeof argNodes[1].value == "string") {
+      var obj = args[0], connect = new infer.AVal;
+      obj.propagate(new infer.PropHasSubset(argNodes[1].value, connect, argNodes[1]));
+      args[2].propagate(new PropSpec(connect));
+    }
+    return infer.ANull;
   });
 
   var IsBound = infer.constraint("self, args, target", {

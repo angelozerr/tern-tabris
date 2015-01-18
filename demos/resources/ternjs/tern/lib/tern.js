@@ -74,7 +74,9 @@
 
   function updateText(file, text, srv) {
     file.text = text;
-    file.ast = infer.parse(text, srv.passes, {directSourceFile: file, allowReturnOutsideFunction: true});
+    infer.withContext(srv.cx, function() {
+      file.ast = infer.parse(text, srv.passes, {directSourceFile: file, allowReturnOutsideFunction: true});
+    });
     file.lineOffsets = null;
   }
 
@@ -179,7 +181,10 @@
     if (files.length) ++srv.uses;
     for (var i = 0; i < files.length; ++i) {
       var file = files[i];
-      ensureFile(srv, file.name, null, file.type == "full" ? file.text : null);
+      if (file.type == "delete")
+        srv.delFile(file.name);
+      else
+        ensureFile(srv, file.name, null, file.type == "full" ? file.text : null);
     }
 
     var timeBudget = typeof doc.timeout == "number" ? [doc.timeout] : null;
@@ -362,7 +367,7 @@
     if (!isRef) return srv.findFile(name);
 
     var file = localFiles[isRef[1]];
-    if (!file) throw ternError("Reference to unknown file " + name);
+    if (!file || file.type == "delete") throw ternError("Reference to unknown file " + name);
     if (file.type == "full") return srv.findFile(file.name);
 
     // This is a partial file
@@ -478,8 +483,9 @@
       for (var i = 0; i < doc.files.length; ++i) {
         var file = doc.files[i];
         if (typeof file != "object") return ".files[n] must be objects";
-        else if (typeof file.text != "string") return ".files[n].text must be a string";
         else if (typeof file.name != "string") return ".files[n].name must be a string";
+        else if (file.type == "delete") continue;
+        else if (typeof file.text != "string") return ".files[n].text must be a string";
         else if (file.type == "part") {
           if (!isPosition(file.offset) && typeof file.offsetLines != "number")
             return ".files[n].offset must be a position";
@@ -505,7 +511,7 @@
     return pos;
   }
 
-  function resolvePos(file, pos, tolerant) {
+  var resolvePos = exports.resolvePos = function(file, pos, tolerant) {
     if (typeof pos != "number") {
       var lineStart = findLineStart(file, pos.line);
       if (lineStart == null) {
@@ -520,7 +526,7 @@
       else throw ternError("Position " + pos + " is outside of file.");
     }
     return pos;
-  }
+  };
 
   function asLineChar(file, pos) {
     if (!file) return {line: 0, ch: 0};
@@ -539,7 +545,7 @@
     return {line: line, ch: pos - lineStart};
   }
 
-  function outputPos(query, file, pos) {
+  var outputPos = exports.outputPos = function(query, file, pos) {
     if (query.lineCharPositions) {
       var out = asLineChar(file, pos);
       if (file.type == "part")
@@ -548,7 +554,7 @@
     } else {
       return pos + (file.type == "part" ? file.offset : 0);
     }
-  }
+  };
 
   // Delete empty fields from result objects
   function clean(obj) {
@@ -573,6 +579,16 @@
       node.start == start - 1 && node.end <= end + 1;
   }
 
+  function pointInProp(objNode, point) {
+    for (var i = 0; i < objNode.properties.length; i++) {
+      var curProp = objNode.properties[i];
+      if (curProp.key.start <= point && curProp.key.end >= point)
+        return {type: 'key', node: curProp};
+      if (curProp.value.start <= point && curProp.value.end >= point)
+        return {type: 'value', node: curProp};
+    }
+  }
+
   var jsKeywords = ("break do instanceof typeof case else new var " +
     "catch finally return void continue for switch while debugger " +
     "function this with default if throw delete in try").split(" ");
@@ -588,7 +604,7 @@
     while (wordStart && acorn.isIdentifierChar(text.charCodeAt(wordStart - 1))) --wordStart;
     if (query.expandWordForward !== false)
       while (wordEnd < text.length && acorn.isIdentifierChar(text.charCodeAt(wordEnd))) ++wordEnd;
-    var word = text.slice(wordStart, wordEnd), completions = [];
+    var word = text.slice(wordStart, wordEnd), completions = [], ignoreObj;
     if (query.caseInsensitive) word = word.toLowerCase();
     var wrapAsObjs = query.types || query.depths || query.docs || query.urls || query.origins;
 
@@ -598,6 +614,7 @@
       if (query.omitObjectPrototype !== false && obj == srv.cx.protos.Object && !word) return;
       if (query.filter !== false && word &&
           (query.caseInsensitive ? prop.toLowerCase() : prop).indexOf(word) !== 0) return;
+      if (ignoreObj && ignoreObj.props[prop]) return;
       for (var i = 0; i < completions.length; ++i) {
         var c = completions[i];
         if ((wrapAsObjs ? c.name : c) == prop) return;
@@ -623,15 +640,54 @@
       if (wrapAsObjs && addInfo) addInfo(rec);
     }
 
-    var hookname, prop, objType;
-    var memberExpr = infer.findExpressionAround(file.ast, null, wordStart, file.scope, "MemberExpression");
+    var hookname, prop, objType, isKey, isValue;
+    
+    var exprAt = infer.findExpressionAround(file.ast, null, wordStart, file.scope);
+    var memberExpr, objLit;
+    // Decide whether this is an object property, either in a member
+    // expression or an object literal.
+    if (exprAt) {
+      if (exprAt.node.type == "MemberExpression" && exprAt.node.object.end < wordStart) {
+        memberExpr = exprAt;
+      } else if (isStringAround(exprAt.node, wordStart, wordEnd)) {
+        var parent = infer.parentNode(exprAt.node, file.ast);
+        if (parent.type == "MemberExpression" && parent.property == exprAt.node)
+          memberExpr = {node: parent, state: exprAt.state};
+        else if (parent.type == "Property") {
+          var objNode = infer.parentNode(parent, file.ast);
+          objLit = {node: objNode, state: exprAt.state};
+          prop = objProp.key.name ? objProp.key.name : objProp.key.value;
+          isValue = true;
+        }
+      } else if (exprAt.node.type == "ObjectExpression") {
+        var objProp = pointInProp(exprAt.node, wordEnd);
+        if (objProp) {
+          objLit = exprAt;
+          prop = objProp.node[objProp.type].name ? objProp.node[objProp.type].name : objProp.node[objProp.type].value;
+          isKey = objProp.type == 'key', isValue = !isKey;
+        } else if (!word && !/:\s*$/.test(file.text.slice(0, wordStart))) {
+          objLit = exprAt;
+          prop = isKey = true;
+        } else {
+          objLit = exprAt;
+          prop = isValue = true;
+        }
+      }
+    }
 
-    if (memberExpr &&
-        (memberExpr.node.computed ? isStringAround(memberExpr.node.property, wordStart, wordEnd)
-                                  : memberExpr.node.object.end < wordStart)) {
+    if (objLit) {
+      // Since we can't use the type of the literal itself to complete
+      // its properties (it doesn't contain the information we need),
+      // we have to try asking the surrounding expression for type info.
+      objType = infer.typeFromContext(file.ast, objLit);
+      if (isValue) {
+        prop = false;
+      } else {
+        ignoreObj = objLit.node.objType; 
+      }      
+    } else if (memberExpr) {
       prop = memberExpr.node.property;
       prop = prop.type == "Literal" ? prop.value.slice(1) : prop.name;
-
       memberExpr.node = memberExpr.node.object;
       objType = infer.expressionType(memberExpr);
     } else if (text.charAt(wordStart - 1) == ".") {
@@ -669,7 +725,8 @@
 
     return {start: outputPos(query, file, wordStart),
             end: outputPos(query, file, wordEnd),
-            isProperty: hookname == "memberCompletion",
+            isProperty: !!prop,
+            isObjectKey: isKey,
             completions: completions};
   }
 
@@ -693,7 +750,8 @@
       var expr = infer.findExpressionAt(file.ast, start, end, file.scope);
       if (expr) return expr;
       expr = infer.findExpressionAround(file.ast, start, end, file.scope);
-      if (expr && (wide || (start == null ? end : start) - expr.node.start < 20 || expr.node.end - end < 20))
+      if (expr && (expr.node.type == "ObjectExpression" || wide ||
+                   (start == null ? end : start) - expr.node.start < 20 || expr.node.end - end < 20))
         return expr;
       return null;
     }
@@ -703,6 +761,11 @@
     var expr = findExpr(file, query, wide);
     if (expr) return expr;
     throw ternError("No expression at the given position.");
+  }
+
+  function ensureObj(tp) {
+    if (!tp || !(tp = tp.getType()) || !(tp instanceof infer.Obj)) return null;
+    return tp;
   }
 
   function findExprType(srv, query, file, expr) {
@@ -718,6 +781,20 @@
       });
     }
     if (!type) throw ternError("No type found at the given position.");
+
+    var objProp;
+    if (expr.node.type == "ObjectExpression" && query.end != null &&
+        (objProp = pointInProp(expr.node, resolvePos(file, query.end)))) {
+      var name = objProp.key.name;
+      var fromCx = ensureObj(infer.typeFromContext(file.ast, expr));
+      if (fromCx && fromCx.hasProp(name)) {
+        type = fromCx.props[name];
+      } else {
+        var fromLocal = ensureObj(type);
+        if (fromLocal && fromLocal.hasProp(name))
+          type = fromLocal.props[name];
+      }
+    }
     return type;
   };
 
@@ -742,10 +819,9 @@
     var result = {guess: infer.didGuess(),
                   type: infer.toString(type, query.depth),
                   name: type && type.name,
-                  exprName: exprName,
-                  doc: exprType && exprType.doc
-    };
+                  exprName: exprName};
     if (type) storeTypeDocs(type, result);
+    if (!result.doc && exprType.doc) result.doc = exprType.doc;
 
     return clean(result);
   }
@@ -753,7 +829,7 @@
   function findDocs(srv, query, file) {
     var expr = findExpr(file, query);
     var type = findExprType(srv, query, file, expr);
-    var result = {url: type.url, doc: type.doc, type: infer.toString(type)};
+    var result = {url: type.url, doc: type.doc, type: infer.toString(type.getType())};
     var inner = type.getType();
     if (inner) storeTypeDocs(inner, result);
     return clean(result);
