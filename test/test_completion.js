@@ -5,6 +5,7 @@ exports['test tabris completion'] = function() {
     "start":{"line":0,"ch":0},
 	"end":{"line":0,"ch":2},
 	"isProperty":false,
+	"isObjectKey": false,
 	"completions":[{"name":"tabris","type":"tabris","origin":"tabris"}]
   });
 }
@@ -16,6 +17,7 @@ exports['test tabris.create completion'] = function() {
     "start":{"line":0,"ch":51},
     "end":{"line":0,"ch":51},
     "isProperty":true,
+    "isObjectKey": false,
     "completions":[]
   });
  
