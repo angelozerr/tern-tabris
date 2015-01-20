@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <title>Tabris Tern Demo</title>
     
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-2.1.3.js"></script>
     <!-- CodeMirror -->
     <link rel="stylesheet" href="resources/codemirror/lib/codemirror.css">
     <script src="resources/codemirror/lib/codemirror.js"></script>
@@ -16,6 +18,7 @@
     <script src="resources/codemirror/addon/runmode/runmode.js"></script>
         
     <script src="resources/codemirror/mode/javascript/javascript.js"></script>    
+    <script src="tabrisjs-cm-init.js"></script>
 
   <!-- Tern JS -->
   <script src="resources/ternjs/acorn/acorn.js"></script>
@@ -59,6 +62,9 @@
   <!-- tabris.js Templates -->
   <script src="../codemirror/addon/hint/javascript/tabris-templates.js"></script>
 
+  <!-- tabris.js Context Autocomplete -->
+  <script src="../codemirror/addon/hint/context-autocomplete-hint.js"></script>
+
   </head>
   <body>
     
@@ -74,42 +80,5 @@ var selectionHandler = function() {
 };
 button.on("selection", selectionHandler);
 </textarea></form>
-    <script type="text/javascript">
-       
-      function passAndHint(cm) {
-     	setTimeout(function() {cm.execCommand("autocomplete");}, 100);
-      	return CodeMirror.Pass;
-      }
-      
-      function myHint(cm) {
-      	return CodeMirror.showHint(cm, CodeMirror.ternHint, {async: true}); 
-      }
-     
-      CodeMirror.commands.autocomplete = function(cm) {
-        CodeMirror.showHint(cm, myHint);
-      }
-        
-      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        mode: 'application/javascript',
-        theme : "eclipse",
-        styleActiveLine: true,
-        lineNumbers: true,
-        lineWrapping: true,
-        autoCloseBrackets: true,
-        matchBrackets: true,
-        extraKeys: {
-         	"'.'": passAndHint,
-        	"Ctrl-Space": "autocomplete",
-        	"Ctrl-I": function(cm) { CodeMirror.tern.showType(cm); },
-  	        "Alt-.": function(cm) { CodeMirror.tern.jumpToDef(cm); },
-	        "Alt-,": function(cm) { CodeMirror.tern.jumpBack(cm); },
-	        "Ctrl-Q": function(cm) { CodeMirror.tern.rename(cm); }
-        },
-        gutters: ["CodeMirror-linenumbers"],
-    	textHover: {delay:300},
-    	ternWith: { plugins: {"tabris" : {}}}
-      });
-    </script>
-    
   </body>
 </html>

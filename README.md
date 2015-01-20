@@ -8,6 +8,7 @@
 
  * the tern tabris plugin [tabris.js](https://github.com/angelozerr/tern-tabris/blob/master/tabris.js)
  * the CodeMirror template lint addon [tabris-templates.js](https://github.com/angelozerr/tern-tabris/blob/master/codemirror/addon/hint/javascript/tabris-templates.js) for CodeMirror tabris completion templates.
+ * the CodeMirror context autocomplete addon [context-autocomplete-hint.js](https://github.com/angelozerr/tern-tabris/blob/master/codemirror/addon/hint/context-autocomplete-hint.js) for expansion of placeholder variables to strings and triggering autocompletion for functions with string arguments.
  
 ## Demo
 
