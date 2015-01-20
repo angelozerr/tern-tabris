@@ -12,6 +12,7 @@
   CodeMirror.commands.contextAutocomplete = function(cm) {
     var contextAutocompleteFunctionArgs = {
       "tabris.create": "type",
+      "set": "name",
       "get": "name",
       "on": "type",
       "off": "type",
