@@ -60,6 +60,13 @@ exports['test Widget.get completion'] = function() {
     "origin":"ecma5"
   }, null, null, "charAt");
 
+  // get() returns proper types for widgets other than Button
+  util.assertCompletion("var button = tabris.create('Label', {});button.get('text').", {
+    "name":"charAt",
+    "type":"fn(i: number) -> string",
+    "origin":"ecma5"
+  }, null, null, "charAt");
+
   // get('selection') returns a boolean
   /*util.assertCompletion("var button = tabris.create('Button', {});button.get('selection').", {
     "name":"left",

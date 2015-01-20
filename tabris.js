@@ -62,7 +62,7 @@
     var cx = infer.cx(), locals = cx.definitions.tabris;    
     var objectName = proto.name, index = objectName.indexOf("!types.");
     if (index == 0) objectName = objectName.substring("!types.".length, objectName.length);
-    objectName = objectName.substring(0, proto.name.indexOf('.')) + 'Properties';
+    objectName = objectName.substring(0, objectName.indexOf('.')) + 'Properties';
     return locals["!properties"].hasProp(objectName);
   }
   
@@ -94,7 +94,7 @@
     var cx = infer.cx(), locals = cx.definitions.tabris;    
     var objectName = proto.name, index = objectName.indexOf("!types.");
     if (index == 0) objectName = objectName.substring("!types.".length, objectName.length);
-    objectName = objectName.substring(0, proto.name.indexOf('.')) + 'Events';
+    objectName = objectName.substring(0, objectName.indexOf('.')) + 'Events';
     return locals["!events"].hasProp(objectName);
   }
   
