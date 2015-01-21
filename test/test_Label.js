@@ -26,7 +26,7 @@ exports['test Label completion'] = function() {
   // animate
   util.assertCompletion("var label = tabris.create('Label', {});label.", {
     "name":"animate",
-    "type":"fn(properties: ?, options: ?)",
+    "type":"fn(animationProperties: ?, options: ?)",
     "origin":"tabris"
   }, null, null, "animate");
  

@@ -45,7 +45,7 @@ exports['test tabris.create completion'] = function() {
   // animate
   util.assertCompletion("var button = tabris.create('Button', {});button.", {
     "name":"animate",
-    "type":"fn(properties: ?, options: ?)",
+    "type":"fn(animationProperties: ?, options: ?)",
     "origin":"tabris"
   }, null, null, "animate");
  
@@ -83,7 +83,7 @@ exports['test Widget.on listener "this" completion'] = function() {
   		"button.on('selection', selectionHandler);" +
   		"var selectionHandler = function() { this.", {
     "name":"animate",
-    "type":"fn(properties: ?, options: ?)",
+    "type":"fn(animationProperties: ?, options: ?)",
     "origin":"tabris"
   }, null, null, "animate");
  

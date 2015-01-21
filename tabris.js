@@ -214,7 +214,7 @@
   function maybeSet(obj, prop, val) {
     if (val != null) obj[prop] = val;
   }
-      
+
   var defs = {
     "!name" : "tabris",
     "!define" : {
@@ -248,6 +248,8 @@
           "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/property-types.md#font"
         },
         "Image": {
+          "!doc": "Image object associated with the element.",
+          "!url": "https://github.com/eclipsesource/tabris-js/blob/master/doc/property-types.md#image",
           "src": {
             "!type": "string",
             "!doc": "Image path or URL."
@@ -371,7 +373,7 @@
             "!type" : "bool",
             "!doc" : "Whether the widget can be operated."
           },
-          "visibility" : {
+          "visible" : {
             "!type" : "bool",
             "!doc" : "Whether the widget is visible."
           },
@@ -425,6 +427,208 @@
             "!type" : "string",
             "!doc" : "The button's label text."
           }
+        },
+        "PageProperties": {
+          "image" : {
+            "!type" : "!propertyTypes.Image",
+            "!doc" : "An image to be displayed next to the navigation drawer page entry."
+          },
+          "title" : {
+            "!type" : "string",
+            "!doc" : "The title of the page."
+          },
+          "topLevel" : {
+            "!type" : "bool",
+            "!doc" : "Defines whether this is a top level page, i.e. has an entry in the navigation drawer."
+          }
+        },
+        "LabelProperties": {
+          "alignment" : {
+            "!type" : "string",
+            "!doc" : "The horizontal alignment of the label text."
+          },
+          "markupEnabled": {
+            "!type": "bool",
+            "!doc": "Allows for a subset of HTML tags in the label text. Supported tags are: `a`, `del`, `ins`, `b`, `i`, `strong`, `em`, `big`, `small`, `br`. All tags must be closed (e.g. use <br/> instead of <br>). Nesting tags is currently not supported. This property must be set in the **create** method."
+          },
+          "text" : {
+            "!type" : "string",
+            "!doc" : "The label text."
+          }
+        },
+        "CheckBoxProperties": {
+          "selection" : {
+            "!type" : "bool",
+            "!doc" : "The checked state of the check box."
+          },
+          "text" : {
+            "!type" : "string",
+            "!doc" : "The label text of the check box."
+          }
+        },
+        "CollectionViewProperties": {
+          "initializeCell" : {
+            "!type" : "fn()",
+            "!doc" : "A callback used to initialize a collection cell. Cells are created by the framework and recycled on scrolling. This callback receives an empty collection cell as an argument and appends widgets to it. The cell triggers an `itemchange` event (name subject to change) with a single element from the items array as a callback argument. Can only be set in the `create` method."
+          },
+          "itemHeight" : {
+            "!type" : "number",
+            "!doc" : "The height of a collection cell."
+          },
+          "items" : {
+            "!type" : "[?]",
+            "!doc" : "An array of data items to be displayed by the collection view."
+          }
+        },
+        "ComboProperties": {
+          "items" : {
+            "!type" : "[string]",
+            "!doc" : "Array of strings containing the combo items."
+          },
+          "selectionIndex" : {
+            "!type" : "number",
+            "!doc" : "Index of the currently selected combo item."
+          },
+          "text" : {
+            "!type" : "string",
+            "!doc" : "Text of the selected combo item."
+          }
+        },
+        "ImageViewProperties": {
+          "image" : {
+            "!type" : "!propertyTypes.Image",
+            "!doc" : "The image shown in the ImageView."
+          },
+          "scaleMode" : {
+            "!type" : "number",
+            "!doc" : "The scale mode of the image in the image view. Supported values: `auto`, `fit`, `fill`, `stretch`, `none`, default: `auto`"
+          }
+        },
+        "ProgressBarProperties": {
+          "maximum" : {
+            "!type" : "number",
+            "!doc" : "The maximal numeric value of the progress bar, default: `100`"
+          },
+          "minimum" : {
+            "!type" : "number",
+            "!doc" : "The minimal numeric value of the progress bar, default: `0`"
+          },
+          "selection" : {
+            "!type" : "number",
+            "!doc" : "The current progress bar value. Default: `0`"
+          },
+          "state" : {
+            "!type" : "string",
+            "!doc" : "The state of the progress bar. Supported values: `normal`, `paused`, `error`, default: `normal`"
+          }
+        },
+        "RadioButtonProperties": {
+          "selection" : {
+            "!type" : "bool",
+            "!doc" : "The checked state of the radio button."
+          },
+          "text" : {
+            "!type" : "string",
+            "!doc" : "The label text of the radio button."
+          }
+        },
+        "SliderProperties": {
+          "maximum" : {
+            "!type" : "number",
+            "!doc" : "The maximal numeric value of the slider, default: `100`"
+          },
+          "minimum" : {
+            "!type" : "number",
+            "!doc" : "The minimal numeric value of the slider, default: `0`"
+          },
+          "selection" : {
+            "!type" : "number",
+            "!doc" : "The current slider value. Default: `0`"
+          },
+        },
+        "TabFolderProperties": {
+          "paging" : {
+            "!type" : "bool",
+            "!doc" : "Enables swiping through tabs."
+          },
+          "selection" : {
+            "!type" : "!types.Tab",
+            "!doc" : "The selected tab object."
+          },
+          "tabBarLocation" : {
+            "!type" : "string",
+            "!doc" : "The placement of the tab titles. When set to `auto`, the position is platform dependent. Can only be set in the create method. Supported values: `top`, `bottom`, `auto`, default: `auto`"
+          },
+        },
+        "TabProperties": {
+          "badge" : {
+            "!type" : "string",
+            "!doc" : "Text of the tab badge on iOS."
+          },
+          "image" : {
+            "!type" : "!propertyTypes.Image",
+            "!doc" : "Image shown on the tab button."
+          },
+          "title" : {
+            "!type" : "string",
+            "!doc" : "Text title of the tab."
+          },
+        },
+        "TextProperties": {
+          "editable" : {
+            "!type" : "bool",
+            "!doc" : "Whether the Text widget is editable."
+          },
+          "message" : {
+            "!type" : "string",
+            "!doc" : "Displayed only when the field is empty."
+          },
+          "text" : {
+            "!type" : "string",
+            "!doc" : "Input text."
+          },
+          "textLimit" : {
+            "!type" : "number",
+            "!doc" : "Maximal number of characters allowed to be input in the text widget."
+          },
+          "textType" : {
+            "!type" : "string",
+            "!doc" : "The type of the text widget. Can only be set in the `create` method. Supported values: `default`, `password`, `search`, `multiline`, default: `default`."
+          }
+        },
+        "ToggleButtonProperties": {
+          "alignment" : {
+            "!type" : "string",
+            "!doc" : "The horizontal alignment of the button text. Supported values: `left`, `right`, `center`, default: `center`"
+          },
+          "image" : {
+            "!type" : "!propertyTypes.Image",
+            "!doc" : "An image to be displayed on the button."
+          },
+          "selection" : {
+            "!type" : "bool",
+            "!doc" : "The selection state of the toggle button."
+          },
+          "text" : {
+            "!type" : "string",
+            "!doc" : "The button's label text."
+          },
+        },
+        "ScrollCompositeProperties": {
+          "direction" : {
+            "!type" : "string",
+            "!doc" : "Specifies the scrolling direction of the scroll composite. Can only be set in the `create` method. Supported values: `vertical`, `horizontal`, default: `vertical`."
+          }
+        },
+        "WebViewProperties": {
+          "html" : {
+            "!type" : "string",
+            "!doc" : "A complete HTML document to display. Always returns the last set value."
+          },
+          "url" : {
+            "!type" : "string",
+            "!doc" : "The URL of the web page to display. Returns empty string when content from `html` property is displayed."
+          }
         }
       },
       "!events": {
@@ -460,6 +664,63 @@
           "selection": {
             "!doc": "Fired when the button is pressed."
           }
+        },
+        "CheckBoxEvents": {
+          "change:selection": {
+            "!doc": "Fired when the check box is checked or unchecked."
+          }
+        },
+        "CollectionViewEvents": {
+          "selection": {
+            "!doc": "Fired when a collection item is selected. The event object includes a field `item` that contains the data item that is mapped to the selected cell."
+          }
+        },
+        "ComboEvents": {
+          "change:selection": {
+            "!doc": "Fired when the selected combo item gets changed."
+          }
+        },
+        "CompositeEvents": {
+          "add": {
+            "!doc": "Fired when a child is added. Arguments are (child, composite, {})."
+          },
+          "remove": {
+            "!doc": "Fired when a child is removed. Arguments are (child, composite, {index: number})."
+          }
+        },
+        "RadioButtonEvents": {
+          "change:selection": {
+            "!doc": "Fired when the radio button is selected or deselected."
+          }
+        },
+        "SliderEvents": {
+          "change:selection": {
+            "!doc": "Fired when the selection of the slider gets changed."
+          }
+        },
+        "TextEvents": {
+          "accept": {
+            "!doc": "Fired when a text input has been finished by pressing the keyboard's Enter key. The label of this key may vary depending on the platform and locale."
+          },
+          "blur": {
+            "!doc": "Fired when the widget lost focus."
+          },
+          "change:text": {
+            "!doc": "Fired when the text property changes."
+          },
+          "focus": {
+            "!doc": "Fired when the widget gains focus."
+          }
+        },
+        "ToggleButtonEvents": {
+          "change:selection": {
+            "!doc": "Fired when the toggle button is selected or deselected."
+          }
+        },
+        "ScrollCompositeEvents": {
+          "scroll": {
+            "!doc": "Fired on scrolling. The event handler receives an event object containing the properties `x` and `y` that indicate the scrolling position."
+          }
         }
       },
       "!types": {
@@ -469,7 +730,7 @@
           "prototype" : {
             "get" : {
               "!type" : "fn(name: string) -> !custom:tabris_Proxy_get",
-              "!doc" : "Retrieves the current value of the given property from the a and returns it.",
+              "!doc" : "Retrieves the current value of the given property from the action and returns it.",
               "!data": {
                 "!lint": "tabrisGet_lint"
               }
@@ -489,11 +750,12 @@
             },
             "set" : {
               "!type" : "fn(name: string, value: string) -> !this",
+              "!effects" : ["custom tabris_Proxy_set"],
               "!doc" : "Sets a widget property. Returns the widget itself.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#setproperties"
             },
             "animate" : {
-              "!type" : "fn(properties: ?, options: ?)",
+              "!type" : "fn(animationProperties: ?, options: ?)",
               "!doc" : "Changes a number of widget properties with an animation. Currently, only the properties transform and opacity are supported. Does not yet return any value.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#animateproperties-options"
             },
@@ -518,7 +780,7 @@
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#children"
             },
             "on" : {
-              "!type" : "fn(type: string, listener: fn(), context?: ?) -> !this",
+              "!type" : "fn(type: string, listener: fn()) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Binds a listener function to the widget. The listener will be invoked whenever an event of the given event type is fired.",
               "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context",
@@ -527,10 +789,10 @@
               }
             },
             "off" : {
-              "!type" : "fn(type?: string, listener?: fn(), context?: ?) -> !this",
+              "!type" : "fn(type?: string, listener?: fn()) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Removes a previously-bound listener function from a widget. If no context is specified, all of the versions of the listener with different contexts will be removed. If no listener is specified, all listeners for the event will be removed. If no type is specified, callbacks for all events will be removed. Returns the widget itself.",
-              "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#ontype-listener-context",
+              "!url" : "https://github.com/eclipsesource/tabris-js/blob/master/doc/widgets.md#offtype-listener-context",
               "!data": {
                 "!lint": "tabrisEvent_lint"
               }
@@ -551,23 +813,18 @@
             }
           }
         },
-        "Composite" : {
-          "!type" : "fn()",
-          "!doc" : "TODO",
-          "prototype" : {
-            "!proto" : "!types.Widget.prototype"
-          }
-        },
         "Page" : {
           "!type" : "fn()",
-          "!doc" : "TODO",
+          "!doc" : "Pages contain an application's UI. Top-level pages are included in the application's main menu.",
           "prototype" : {
             "!proto" : "!types.Composite.prototype",
             "open" : {
-              "!type" : "fn()",
+              "!type" : "fn() -> !this",
+              "!doc" : "Opens the page."
             },
             "close" : {
               "!type" : "fn()",
+              "!doc" : "Closes the page, i.e. disposes of it."
             }
           }
         },
@@ -584,13 +841,115 @@
           "prototype" : {
             "!proto" : "!types.Widget.prototype"
           }
-        }  
+        },
+        "CheckBox" : {
+          "!type" : "fn()",
+          "!doc" : "A check box widget.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "CollectionView" : {
+          "!type" : "fn()",
+          "!doc" : "A scrollable list that displays data items in cells, one per row. Cells are created on demand and filled with widgets in the 'initializeCell' callback. When a data item is mapped to a cell, the cell receives a 'itemchange' event.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "Combo" : {
+          "!type" : "fn()",
+          "!doc" : "A widget with a drop-down list of items to choose from. Name is subject to change.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "Composite" : {
+          "!type" : "fn()",
+          "!doc" : "An empty widget that can contain other widgets.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "Canvas" : {
+          "!type" : "fn()",
+          "!doc" : "An empty widget to draw graphics on. Can also contain other widgets.",
+          "prototype" : {
+            "!proto" : "!types.Composite.prototype"
+          }
+        },
+        "ImageView" : {
+          "!type" : "fn()",
+          "!doc" : "A widget to display an image.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "ProgressBar" : {
+          "!type" : "fn()",
+          "!doc" : "A widget representing a numeric value as a horizontal bar with a growing indicator.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "RadioButton" : {
+          "!type" : "fn()",
+          "!doc" : "A radio button. Selecting a radio button deselects all its siblings (i.e. all radio buttons within the same parent). Known Issues: RadioButton is not automatically deselected on iOS",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "Slider" : {
+          "!type" : "fn()",
+          "!doc" : "A widget representing a numeric value as an movable indicator on a horizontal line. Known Issues: Selection event is only fired after indicator is released.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "TabFolder" : {
+          "!type" : "fn()",
+          "!doc" : "A widget that can switch between tabs.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "Tab" : {
+          "!type" : "fn()",
+          "!doc" : "A container representing a single tab of the TabFolder widget.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "Text" : {
+          "!type" : "fn()",
+          "!doc" : "A widget that allows to enter text. Known Issues: The cursor jumps to the beginning of the text in iOS.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "ToggleButton" : {
+          "!type" : "fn()",
+          "!doc" : "A push button that \"snaps in\", i.e. it is selected when pressed and deselected when pressed again.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "ScrollComposite" : {
+          "!type" : "fn()",
+          "!doc" : "A composite that allows its content to overflow either vertically (default) or horizontally.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        },
+        "WebView" : {
+          "!type" : "fn()",
+          "!doc" : "A widget that can display a web page. Known Issues: Having multiple instances of this widget on screen may not work.",
+          "prototype" : {
+            "!proto" : "!types.Widget.prototype"
+          }
+        }
       }      
     },
     "tabris" : {
-      "load" : {
-        "!type" : "fn(fn: fn())"
-      },
       "create" : {
         "!type" : "fn(type: string, properties?: ?) -> !custom:tabris_create",
         "!doc" : "Creates a native widget of a given type and returns its reference.",
@@ -600,6 +959,5 @@
         }
       }
     }
-  }
-
+  };
 });
