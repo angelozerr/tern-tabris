@@ -4,6 +4,11 @@
 
 [tern-tabris](https://github.com/angelozerr/tern-tabris) is a plugin which adds support for [tabris.js](https://github.com/eclipsesource/tabris-js) to the JavaSript code intelligence system [Tern](http://ternjs.net/).
 
+[tern-tabris](https://github.com/angelozerr/tern-tabris) provides :
+
+ * the tern tabris plugin [tabris.js](https://github.com/angelozerr/tern-tabris/blob/master/tabris.js)
+ * the CodeMirror template lint addon [tabris-templates.js](https://github.com/angelozerr/tern-tabris/blob/master/codemirror/addon/hint/javascript/tabris-templates.js) for CodeMirror tabris completion templates.
+ 
 ## Demo
 
 You can play with [online demo](http://codemirror-java.opensagres.eu.cloudbees.net/codemirror-javascript/demo/tabris.html) which uses CodeMirror ((inside Web Browser).
