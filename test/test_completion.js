@@ -51,6 +51,17 @@ exports['test tabris.create completion'] = function() {
  
 }
 
+exports['test Widget.set completion'] = function() {
+
+  // set('text', {}) returns self
+  util.assertCompletion("var button = tabris.create('Button', {});button.set('text', {}).", {
+    "name":"animate",
+    "type":"fn(animationProperties: ?, options: ?)",
+    "origin":"tabris"
+  }, null, null, "animate");
+
+}
+
 exports['test Widget.get completion'] = function() {
 	 
   // get('text') returns a string

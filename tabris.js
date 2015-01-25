@@ -77,15 +77,17 @@
     }
     return null;
   }
-  
-  infer.registerFunction("tabris_Proxy_get", function(_self, args, argNodes) {
-    if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
+
+  ["tabris_Proxy_get", "tabris_Proxy_set"].forEach(function(name) {
+    infer.registerFunction(name, function(_self, args, argNodes) {
+      if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
+        return infer.ANull;
+  	  
+      var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getPropertyType(widgetType, propertyName);
+      argNodes[0]._tabris = {"type" : "tabris_Proxy_get", "proxyType" : widgetType};
+      if (propertyType) return propertyType.getType();
       return infer.ANull;
-	  
-    var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getPropertyType(widgetType, propertyName);
-    argNodes[0]._tabris = {"type" : "tabris_Proxy_get", "proxyType" : widgetType};
-    if (propertyType) return propertyType.getType();
-    return infer.ANull;
+    });
   });
 
   // widget.on(
@@ -178,6 +180,7 @@
         
         switch(nodeArg._tabris.type) {
           case "tabris_Proxy_get":
+          case "tabris_Proxy_set":
             var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
             while(proto) {
               var objType = getObjectProperties(proto);
