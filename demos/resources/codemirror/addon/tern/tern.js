@@ -589,7 +589,7 @@
       cm.off("cursorActivity", clear);
       fadeOut(tip);
     }
-    setTimeout(clear, 1700);
+    setTimeout(clear, 5000);
     cm.on("cursorActivity", clear);
   }
 
