@@ -25,7 +25,8 @@
     plugins: {},
     fetchTimeout: 1000,
     dependencyBudget: 20000,
-    reuseInstances: true
+    reuseInstances: true,
+    stripCRs: false
   };
 
   var queryTypes = {
@@ -73,9 +74,9 @@
   File.prototype.asLineChar = function(pos) { return asLineChar(this, pos); };
 
   function updateText(file, text, srv) {
-    file.text = text;
+    file.text = srv.options.stripCRs ? text.replace(/\r\n/g, "\n") : text;
     infer.withContext(srv.cx, function() {
-      file.ast = infer.parse(text, srv.passes, {directSourceFile: file, allowReturnOutsideFunction: true});
+      file.ast = infer.parse(file.text, srv.passes, {directSourceFile: file, allowReturnOutsideFunction: true});
     });
     file.lineOffsets = null;
   }
@@ -583,9 +584,7 @@
     for (var i = 0; i < objNode.properties.length; i++) {
       var curProp = objNode.properties[i];
       if (curProp.key.start <= point && curProp.key.end >= point)
-        return {type: 'key', node: curProp};
-      if (curProp.value.start <= point && curProp.value.end >= point)
-        return {type: 'value', node: curProp};
+        return curProp;
     }
   }
 
@@ -628,7 +627,7 @@
         var type = val.getType();
         rec.guess = infer.didGuess();
         if (query.types)
-          rec.type = infer.toString(type);
+          rec.type = infer.toString(val);
         if (query.docs)
           maybeSet(rec, "doc", val.doc || type && type.doc);
         if (query.urls)
@@ -640,8 +639,8 @@
       if (wrapAsObjs && addInfo) addInfo(rec);
     }
 
-    var hookname, prop, objType, isKey, isValue;
-    
+    var hookname, prop, objType, isKey;
+
     var exprAt = infer.findExpressionAround(file.ast, null, wordStart, file.scope);
     var memberExpr, objLit;
     // Decide whether this is an object property, either in a member
@@ -653,24 +652,14 @@
         var parent = infer.parentNode(exprAt.node, file.ast);
         if (parent.type == "MemberExpression" && parent.property == exprAt.node)
           memberExpr = {node: parent, state: exprAt.state};
-        else if (parent.type == "Property") {
-          var objNode = infer.parentNode(parent, file.ast);
-          objLit = {node: objNode, state: exprAt.state};
-          prop = objProp.key.name ? objProp.key.name : objProp.key.value;
-          isValue = true;
-        }
       } else if (exprAt.node.type == "ObjectExpression") {
         var objProp = pointInProp(exprAt.node, wordEnd);
         if (objProp) {
           objLit = exprAt;
-          prop = objProp.node[objProp.type].name ? objProp.node[objProp.type].name : objProp.node[objProp.type].value;
-          isKey = objProp.type == 'key', isValue = !isKey;
+          prop = isKey = objProp.key.name;
         } else if (!word && !/:\s*$/.test(file.text.slice(0, wordStart))) {
           objLit = exprAt;
           prop = isKey = true;
-        } else {
-          objLit = exprAt;
-          prop = isValue = true;
         }
       }
     }
@@ -680,11 +669,7 @@
       // its properties (it doesn't contain the information we need),
       // we have to try asking the surrounding expression for type info.
       objType = infer.typeFromContext(file.ast, objLit);
-      if (isValue) {
-        prop = false;
-      } else {
-        ignoreObj = objLit.node.objType; 
-      }      
+      ignoreObj = objLit.node.objType;
     } else if (memberExpr) {
       prop = memberExpr.node.property;
       prop = prop.type == "Literal" ? prop.value.slice(1) : prop.name;
@@ -695,7 +680,7 @@
       while (pathStart && (text.charAt(pathStart - 1) == "." || acorn.isIdentifierChar(text.charCodeAt(pathStart - 1)))) pathStart--;
       var path = text.slice(pathStart, wordStart - 1);
       if (path) {
-        objType = infer.def.parsePath(path, file.scope).getType();
+        objType = infer.def.parsePath(path, file.scope).getObjType();
         prop = word;
       }
     }
@@ -726,7 +711,7 @@
     return {start: outputPos(query, file, wordStart),
             end: outputPos(query, file, wordEnd),
             isProperty: !!prop,
-            isObjectKey: isKey,
+            isObjectKey: !!isKey,
             completions: completions};
   }
 
@@ -788,11 +773,11 @@
       var name = objProp.key.name;
       var fromCx = ensureObj(infer.typeFromContext(file.ast, expr));
       if (fromCx && fromCx.hasProp(name)) {
-        type = fromCx.props[name];
+        type = fromCx.hasProp(name);
       } else {
         var fromLocal = ensureObj(type);
         if (fromLocal && fromLocal.hasProp(name))
-          type = fromLocal.props[name];
+          type = fromLocal.hasProp(name);
       }
     }
     return type;
@@ -817,7 +802,7 @@
       throw ternError(".query.depth must be a number");
 
     var result = {guess: infer.didGuess(),
-                  type: infer.toString(type, query.depth),
+                  type: infer.toString(exprType, query.depth),
                   name: type && type.name,
                   exprName: exprName};
     if (type) storeTypeDocs(type, result);
@@ -829,7 +814,7 @@
   function findDocs(srv, query, file) {
     var expr = findExpr(file, query);
     var type = findExprType(srv, query, file, expr);
-    var result = {url: type.url, doc: type.doc, type: infer.toString(type.getType())};
+    var result = {url: type.url, doc: type.doc, type: infer.toString(type)};
     var inner = type.getType();
     if (inner) storeTypeDocs(inner, result);
     return clean(result);
@@ -944,7 +929,7 @@
   }
 
   function findRefsToProperty(srv, query, expr, prop) {
-    var objType = infer.expressionType(expr).getType();
+    var objType = infer.expressionType(expr).getObjType();
     if (!objType) throw ternError("Couldn't determine type of base object.");
 
     var refs = [];
@@ -1005,5 +990,5 @@
     return {files: srv.files.map(function(f){return f.name;})};
   }
 
-  exports.version = "0.7.1";
+  exports.version = "0.8.1";
 });

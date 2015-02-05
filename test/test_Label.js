@@ -19,7 +19,7 @@ exports['test Label completion'] = function() {
   // append
   util.assertCompletion("var label = tabris.create('Label', {});label.", {
     "name":"append",
-    "type":"fn(child: !types.Widget)",
+    "type":"fn(child: types.Widget)",
     "origin":"tabris"
   }, null, null, "append");
 

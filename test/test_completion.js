@@ -38,7 +38,7 @@ exports['test tabris.create completion'] = function() {
   // append
   util.assertCompletion("var button = tabris.create('Button', {});button.", {
     "name":"append",
-    "type":"fn(child: !types.Widget)",
+    "type":"fn(child: types.Widget)",
     "origin":"tabris"
   }, null, null, "append");
 
