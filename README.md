@@ -52,6 +52,7 @@ Here is a minimal example `.tern-project` configuration file:
 
 ```json
 {
+  "libs":["ecma5"],
   "plugins": {
     "tabris": {}
   }
