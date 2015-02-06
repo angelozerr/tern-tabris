@@ -12,7 +12,7 @@
  
 ## Demo
 
-You can play with [online demo](http://codemirror-java.opensagres.eu.cloudbees.net/codemirror-javascript/demo/tabris.html) which uses CodeMirror ((inside Web Browser).
+You can play with [online demo](https://tabrisjs.com/downloads/editor.html) which uses CodeMirror ((inside Web Browser).
 
 You can see demo in this git ptoject with CodeMirror in  [demos/tabris.html](https://github.com/angelozerr/tern-tabris/blob/master/demos/tabris.html) :
 
