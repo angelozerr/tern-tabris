@@ -14,7 +14,7 @@
 
 You can play with [online demo](https://tabrisjs.com/downloads/editor.html) which uses CodeMirror ((inside Web Browser).
 
-You can see demo in this git ptoject with CodeMirror in  [demos/tabris.html](https://github.com/angelozerr/tern-tabris/blob/master/demos/tabris.html) :
+You can see demos in this git project with CodeMirror in  [demos/tabris.html](https://github.com/angelozerr/tern-tabris/blob/master/demos/tabris.html) :
 
 Here a screenshot with completion with CodeMorror tabris completion :
  
