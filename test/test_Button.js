@@ -1,6 +1,6 @@
 var util = require("./util");
 
-exports['test Widget completion'] = function() {
+exports['test Button completion'] = function() {
 
   // Widget#children() is an array of Widget
   util.assertCompletion("var button = tabris.create('Button', {});" +
