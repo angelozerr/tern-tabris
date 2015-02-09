@@ -31,7 +31,7 @@ exports['test tabris.create completion'] = function() {
   // set
   util.assertCompletion("var button = tabris.create('Button', {});button.", {
     "name":"set",
-    "type":"fn(name: string, value: string)",
+    "type":"fn(name: string, value: ?)",
     "origin":"tabris"
   }, null, null, "set");
 

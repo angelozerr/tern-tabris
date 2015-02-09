@@ -12,7 +12,7 @@ exports['test Label completion'] = function() {
   // set
   util.assertCompletion("var label = tabris.create('Label', {});label.", {
     "name":"set",
-    "type":"fn(name: string, value: string)",
+    "type":"fn(name: string, value: ?)",
     "origin":"tabris"
   }, null, null, "set");
 
