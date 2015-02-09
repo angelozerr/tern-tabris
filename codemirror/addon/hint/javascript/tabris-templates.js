@@ -18,6 +18,14 @@
       "name": "animationProperties",
       "description": "With the `translation` property set for a horizontal translation animation.",
       "template": "{transform: {translationX: 20}}"
+    }, {
+      "name": "options",
+      "description": "Animation `option` property with delay and duration.",
+      "template": "{delay: 1000, duration: 2000}"
+    }, {
+      "name": "options",
+      "description": "Animation `option` property with duration and easing.",
+      "template": "{duration: 2000, easing: \"ease-out\"}"
     }]
   };
   CodeMirror.templatesHint.addTemplates(templates);
