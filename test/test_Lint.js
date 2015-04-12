@@ -6,19 +6,13 @@ exports['test Button completion'] = function() {
   util.assertCompletion("var button = tabris.create('Button', {});" +
 	"var children = button.children();" +
 	"children.", {
-    "name":"concat",
-    "type":"fn(other: [?])",
-    "origin":"ecma5"
-  }, null, null, "concat");
- 
-  util.assertCompletion("var button = tabris.create('Button', {});" +
-	"var children = button.children();" +
-	"children.forEach(function(elt) {elt.", {
-	"name":"get",
-    "type":"fn(name: string)",
-    "origin":"tabris"
-  }, null, null, "get");
-  
-}
+    "name" : "filter",
+    "type" : "fn(test: fn(elt: types.Widget, i: number) -> bool, context?: ?)",
+    "origin" : "tabris"
+  }, null, null, "filter");
 
-if (module == require.main) require("test").run(exports);
+  util.assertFunction("Button", {name: "get", type: "fn(name: string)"});
+
+};
+
+if (module === require.main) require("test").run(exports);

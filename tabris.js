@@ -13,10 +13,12 @@
     "UnknownTabrisProperty" : {"severity" : "error"},
     "UnknownTabrisEvent" : {"severity" : "error"}
   };
-  
+
+  var notCreatable = ["Widget", "WidgetCollection"];
+
   function registerLints() {
     if (!tern.registerLint) return;
-    
+
     // validate tabris.create(
     tern.registerLint("tabrisCreate_lint", function(node, addMessage, getRule) {
       var argNode = node.arguments[0];
@@ -25,8 +27,8 @@
         if (!types.hasProp(typeName)) addMessage(argNode, "Unknown tabris type '" + typeName + "'", defaultRules.UnknownTabrisType.severity);
       }
     });
-    
-    // validate widget.get(    
+
+    // validate widget.get(
     tern.registerLint("tabrisGet_lint", function(node, addMessage, getRule) {
       var argNode = node.arguments[0];
       if (argNode) {
@@ -35,7 +37,7 @@
       }
     });
 
-    // validate widget.set(    
+    // validate widget.set(
     tern.registerLint("tabrisSet_lint", function(node, addMessage, getRule) {
       var argNode = node.arguments[0];
       if (argNode) {
@@ -43,8 +45,8 @@
         if (!getPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
       }
     });
-    
-    // validate on, off, trigger event(    
+
+    // validate on, off, trigger event(
     tern.registerLint("tabrisEvent_lint", function(node, addMessage, getRule) {
       var argNode = node.arguments[0];
       if (argNode) {
@@ -52,30 +54,30 @@
         if (!getEventType(proxyType, eventName)) addMessage(argNode, "Unknown tabris event '" + eventName + "'", defaultRules.UnknownTabrisEvent.severity);
       }
     });
-    
+
   }
-  
+
   // tabris.create(
-  
+
   infer.registerFunction("tabris_create", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
     var cx = infer.cx(), server = cx.parent, name = argNodes[0].value, locals = cx.definitions.tabris["types"], tabrisType = locals.hasProp(name);
     argNodes[0]._tabris = {"type" : "tabris_create"};
-    if (tabrisType) return new infer.Obj(tabrisType.getType().getProp("prototype").getType());    
+    if (tabrisType) return new infer.Obj(tabrisType.getType().getProp("prototype").getType());
     return infer.ANull;
   });
 
   // widget.get(
-  
+
   function getObjectProperties(proto) {
-    var cx = infer.cx(), locals = cx.definitions.tabris;    
+    var cx = infer.cx(), locals = cx.definitions.tabris;
     var objectName = proto.name, index = objectName.indexOf("types.");
     if (index == 0) objectName = objectName.substring("types.".length, objectName.length);
     objectName = objectName.substring(0, objectName.indexOf('.')) + 'Properties';
     return locals["!properties"].hasProp(objectName);
   }
-  
+
   function getPropertyType(widgetType, propertyName) {
     if (!(widgetType)) return null;
     var proto = widgetType.proto, propertyType = null;
@@ -92,38 +94,38 @@
   infer.registerFunction("tabris_Proxy_get", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
-  
+
     var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getPropertyType(widgetType, propertyName);
     argNodes[0]._tabris = {"type" : "tabris_Proxy_get", "proxyType" : widgetType};
     if (propertyType) return propertyType.getType();
       return infer.ANull;
   });
-  
+
   // widget.set
   infer.registerFunction("tabris_Proxy_set", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
-  
+
     var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getPropertyType(widgetType, propertyName);
     argNodes[0]._tabris = {"type" : "tabris_Proxy_set", "proxyType" : widgetType};
-    
+
    /* if (args[1] && propertyType && propertyType.getType()) {
       var fn = _self.hasProp("set").getFunctionType();
       var newArgs = [args[0], propertyType.getType()];
-      fn.propagate(new infer.IsCallee(infer.cx().topScope, newArgs, argNodes, infer.Null))	
+      fn.propagate(new infer.IsCallee(infer.cx().topScope, newArgs, argNodes, infer.Null))
     }
     return _self;*/
   });
-  
-  // widget.on(  
+
+  // widget.on(
   function getEventProperties(proto) {
-    var cx = infer.cx(), locals = cx.definitions.tabris;    
+    var cx = infer.cx(), locals = cx.definitions.tabris;
     var objectName = proto.name, index = objectName.indexOf("types.");
     if (index == 0) objectName = objectName.substring("types.".length, objectName.length);
     objectName = objectName.substring(0, objectName.indexOf('.')) + 'Events';
     return locals["!events"].hasProp(objectName);
   }
-  
+
   function getEventType(widgetType, eventName) {
     if (!(widgetType)) return null;
     var proto = widgetType.proto, eventType = null;
@@ -135,33 +137,33 @@
     }
     return null;
   }
-  
+
   infer.registerFunction("tabris_Proxy_eventtype", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
-    
+
     var proxyType = _self.getType();
     argNodes[0]._tabris = {"type" : "tabris_Proxy_eventtype", "proxyType" : proxyType};
   });
-  
+
   tern.registerPlugin("tabris", function(server, options) {
 	registerLints();
     return {defs: defs,
       passes: {completion: completion}};
   });
-  
-  function completion(file, query) {       
+
+  function completion(file, query) {
     function getQuote(c) {
-      return c === '\'' || c === '"' ? c : null; 
+      return c === '\'' || c === '"' ? c : null;
     }
-    
+
     if (!query.end) return; // remove this line, once tern will be released
-    
+
     var wordPos = tern.resolvePos(file, query.end);
     var word = null, completions = [];
     var wrapAsObjs = query.types || query.depths || query.docs || query.urls || query.origins;
     var cx = infer.cx(), overrideType = null;
-    
+
     function gather(prop, obj, depth, addInfo) {
       // 'hasOwnProperty' and such are usually just noise, leave them
       // out when no prefix is provided.
@@ -192,17 +194,17 @@
       if (query.depths) rec.depth = depth;
       if (wrapAsObjs && addInfo) addInfo(rec);
     }
-    
+
     var callExpr = infer.findExpressionAround(file.ast, null, wordPos, file.scope, "CallExpression");
     if (callExpr && callExpr.node.arguments && callExpr.node.arguments.length && callExpr.node.arguments.length > 0) {
       var nodeArg = callExpr.node.arguments[0];
       if (!(nodeArg.start <= wordPos && nodeArg.end >= wordPos)) return;
       if (nodeArg._tabris) {
-        var startQuote = getQuote(nodeArg.raw.charAt(0)), endQuote = getQuote(nodeArg.raw.length > 1 ? nodeArg.raw.charAt(nodeArg.raw.length - 1) : null);  
-        var wordEnd = endQuote != null ? nodeArg.end - 1: nodeArg.end, wordStart = startQuote != null ? nodeArg.start + 1: nodeArg.start,    
+        var startQuote = getQuote(nodeArg.raw.charAt(0)), endQuote = getQuote(nodeArg.raw.length > 1 ? nodeArg.raw.charAt(nodeArg.raw.length - 1) : null);
+        var wordEnd = endQuote != null ? nodeArg.end - 1: nodeArg.end, wordStart = startQuote != null ? nodeArg.start + 1: nodeArg.start,
         word = nodeArg.value.slice(0, nodeArg.value.length - (wordEnd - wordPos));
         if (query.caseInsensitive) word = word.toLowerCase();
-        
+
         switch(nodeArg._tabris.type) {
           case "tabris_Proxy_get":
           case "tabris_Proxy_set":
@@ -220,12 +222,13 @@
               if (objType) infer.forAllPropertiesOf(objType, gather);
               proto = proto.proto;
             }
-            break;                        
+            break;
           case "tabris_create":
             var types = cx.definitions.tabris["types"];
+            types.props = omit(types.props, notCreatable);
             overrideType = "string";
             infer.forAllPropertiesOf(types, gather);
-            break;            
+            break;
         }
 
         return {start: tern.outputPos(query, file, wordStart),
@@ -236,9 +239,19 @@
           endQuote: endQuote,
           completions: completions}
       }
-    }    
+    }
   }
-  
+
+  function omit(object, keys) {
+    var result = {};
+    for (var key in object) {
+      if (keys.indexOf(key) === -1) {
+        result[key] = object[key];
+      }
+    }
+    return result;
+  }
+
   function maybeSet(obj, prop, val) {
     if (val != null) obj[prop] = val;
   }
@@ -345,7 +358,7 @@
           }
         },
         "Transformation": {
-          "!doc": "Transformations are specified as an object with the following properties:", 
+          "!doc": "Transformations are specified as an object with the following properties:",
           "!url": "https://tabrisjs.com/documentation/property-types#transformation",
           "rotation": {
             "!type": "number",
@@ -367,8 +380,8 @@
             "!type": "number",
             "!doc": "Vertical translation (shift) in dip."
           }
-        }        
-      },      
+        }
+      },
       "!properties" : {
         "ActionProperties" : {
           "enabled": {
@@ -391,12 +404,16 @@
             "!type": "string",
             "!doc": "The text to be displayed for the action."
           },
-          "visibility": {
+          "visible": {
             "!type": "bool",
             "!doc": "Whether the action is visible."
-          }          
+          }
         },
         "WidgetProperties" : {
+          "id": {
+            "!type" : "string",
+            "!doc" : "A string to identify the widget by using selectors. Id's are optional. It is strongly recommended that they are unique within a page."
+          },
           "enabled" : {
             "!type" : "bool",
             "!doc" : "Whether the widget can be operated."
@@ -407,7 +424,7 @@
           },
           "layoutData" : {
             "!type" : "!propertyTypes.LayoutData",
-            "!doc" : "Specifies how the widget should be arranged in a layout. See [Layout](layout)."
+            "!doc" : "Specifies how the widget should be arranged in a layout."
           },
           "font" : {
             "!type" : "!propertyTypes.Font",
@@ -419,7 +436,7 @@
           },
           "bounds" : {
             "!type" : "!propertyTypes.Bounds",
-            "!doc" : "The actual location and size of the widget, relative to its parent."
+            "!doc" : "The actual location and size of the widget, relative to its parent. This property is read-only."
           },
           "background" : {
             "!type" : "!propertyTypes.Color",
@@ -467,21 +484,59 @@
           },
           "topLevel" : {
             "!type" : "bool",
-            "!doc" : "Defines whether this is a top level page, i.e. has an entry in the navigation drawer."
+            "!doc" : "Defines whether this is a top level page."
           }
         },
-        "LabelProperties": {
+        "TextViewProperties": {
           "alignment" : {
             "!type" : "string",
             "!doc" : "The horizontal alignment of the label text."
           },
           "markupEnabled": {
             "!type": "bool",
-            "!doc": "Allows for a subset of HTML tags in the label text. Supported tags are: `a`, `del`, `ins`, `b`, `i`, `strong`, `em`, `big`, `small`, `br`. All tags must be closed (e.g. use <br/> instead of <br>). Nesting tags is currently not supported. This property must be set in the **create** method."
+            "!doc": "Allows for a subset of HTML tags in the label text. Supported tags are: `a`, `del`, `ins`, `b`, `i`, `strong`, `em`, `big`, `small`, `br`. All tags must be closed (e.g. use <br/> instead of <br>). Nesting tags is currently not supported. This property must be set in the **create** method. It cannot be changed after widget creation."
+          },
+          "maxLines": {
+            "!type": "number",
+            "!doc": "Limit the number of lines to be displayed to the given maximum. `null` disables this limit."
           },
           "text" : {
             "!type" : "string",
-            "!doc" : "The label text."
+            "!doc" : "The text to display."
+          }
+        },
+        "TextInputProperties": {
+          "alignment" : {
+            "!type" : "string",
+            "!doc" : "The horizontal alignment of the text. Supported values: `left`, `right`, `center`, default: `left`."
+          },
+          "autoCapitalize": {
+            "!type": "bool",
+            "!doc": "Automatically switch to capital letters after every key pressed."
+          },
+          "autoCorrect": {
+            "!type": "bool",
+            "!doc": "Enables the spell checker and auto-correction feature."
+          },
+          "editable": {
+            "!type": "bool",
+            "!doc": "Specifies whether the TextInput can be edited."
+          },
+          "keyboard": {
+            "!type": "string",
+            "!doc": "Selects the keyboard type to use for editing this widget. Supported values: `ascii`, `decimal`, `email`, `number`, `numbersAndPunctuation`, `phone`, `url`, `default`, "
+          },
+          "message": {
+            "!type": "string",
+            "!doc": "Displayed only when the field is empty."
+          },
+          "text": {
+            "!type": "string",
+            "!doc": "Displayed input text."
+          },
+          "type": {
+            "!type": "string",
+            "!doc": "The type of the text widget. This property can only be set in the `tabris.create` method. It cannot be changed after widget creation. Supported values: `default`, `password`, `search`, `multiline`, default: `default`."
           }
         },
         "CheckBoxProperties": {
@@ -497,7 +552,7 @@
         "CollectionViewProperties": {
           "initializeCell" : {
             "!type" : "fn()",
-            "!doc" : "A callback used to initialize a collection cell. Cells are created by the framework and recycled on scrolling. This callback receives an empty collection cell as an argument and appends widgets to it. The cell triggers an `itemchange` event (name subject to change) with a single element from the items array as a callback argument. Can only be set in the `create` method."
+            "!doc" : "A callback used to initialize a collection cell. Cells are created by the framework and recycled on scrolling. This callback receives an empty collection cell as an argument and appends widgets to it. The cell triggers an `itemchange` event (*name subject to change*) with a single element from the items array as a callback argument."
           },
           "itemHeight" : {
             "!type" : "number",
@@ -505,10 +560,22 @@
           },
           "items" : {
             "!type" : "[?]",
-            "!doc" : "An array of data items to be displayed by the collection view."
+            "!doc" : "An array of data items to be displayed by the collection view. For dynamic content, use the methods `insert` and `remove` instead of setting this property directly."
+          },
+          "refreshEnabled" : {
+            "!type" : "bool",
+            "!doc" : "Enables the user to trigger a refresh by using the pull-to-refresh gesture."
+          },
+          "refreshIndicator" : {
+            "!type" : "bool",
+            "!doc" : "Whether the refresh indicator is currently visible. Will be set to `true` when a `refresh` event is triggered. Reset it to `false` when the refresh is finished."
+          },
+          "refreshMessage" : {
+            "!type" : "string",
+            "!doc" : "The message text displayed together with the refresh indicator. Currently not supported on Android."
           }
         },
-        "ComboProperties": {
+        "PickerProperties": {
           "items" : {
             "!type" : "[string]",
             "!doc" : "Array of strings containing the combo items."
@@ -528,8 +595,8 @@
             "!doc" : "The image shown in the ImageView."
           },
           "scaleMode" : {
-            "!type" : "number",
-            "!doc" : "The scale mode of the image in the image view. Supported values: `auto`, `fit`, `fill`, `stretch`, `none`, default: `auto`"
+            "!type" : "string",
+            "!doc" : "The scale mode of the image in the ImageView. Supported values: `auto`, `fit`, `fill`, `stretch`, `none`, default: `auto`"
           }
         },
         "ProgressBarProperties": {
@@ -559,6 +626,20 @@
             "!type" : "string",
             "!doc" : "The label text of the radio button."
           }
+        },
+        "SearchActionProperties": {
+          "proposals" : {
+            "!type" : "[string]",
+            "!doc" : "The list of proposals to display. Default: `[]`."
+          },
+          "minimum" : {
+            "!type" : "number",
+            "!doc" : "The minimal numeric value of the slider, default: `0`"
+          },
+          "selection" : {
+            "!type" : "number",
+            "!doc" : "The current slider value. Default: `0`"
+          },
         },
         "SliderProperties": {
           "maximum" : {
@@ -642,10 +723,16 @@
             "!doc" : "The button's label text."
           },
         },
-        "ScrollCompositeProperties": {
+        "ScrollViewProperties": {
           "direction" : {
             "!type" : "string",
-            "!doc" : "Specifies the scrolling direction of the scroll composite. Can only be set in the `create` method. Supported values: `vertical`, `horizontal`, default: `vertical`."
+            "!doc" : "Specifies the scrolling direction of the scroll composite. This property can only be set in the `tabris.create` method. It cannot be changed after widget creation. Supported values: `vertical`, `horizontal`, default: `vertical`."
+          }
+        },
+        "VideoProperties": {
+          "url" : {
+            "!type" : "string",
+            "!doc" : "The URL of the video to play."
           }
         },
         "WebViewProperties": {
@@ -661,46 +748,88 @@
       },
       "!events": {
         "ActionEvents": {
-          "selection": {
-            "!doc": "Fired when the action is invoked."
+          "select": {
+            "!doc": "Fired when the action is invoked. Gives the action as the first parameter."
           }
-        },        
+        },
         "WidgetEvents": {
+          "animationstart": {
+            "!doc": "Fired when widget animation has been started."
+          },
+          "animationend": {
+            "!doc": "Fired when widget animation has ended."
+          },
           "touchstart": {
-            "!doc": "Fired when a widget is touched. See [Touch Events](touch-events)."
+            "!doc": "Fired when a widget is touched."
           },
           "touchmove": {
-            "!doc": "Fired repeatedly while swiping across the screen. See [Touch Events](touch-events)."
+            "!doc": "Fired repeatedly while swiping across the screen."
           },
           "touchend": {
-            "!doc": "Fired when a touch ends on the same widget than it started on. See [Touch Events](touch-events)."
+            "!doc": "Fired when a touch ends on the same widget than it started on."
           },
           "touchcancel": {
-            "!doc": "Fired instead of touchend when the touch ends on another widget than it started on. See [Touch Events](touch-events)."
+            "!doc": "Fired instead of touchend when the touch ends on another widget than it started on."
           },
           "longpress": {
-            "!doc": "Fired after pressing a widget for a specific amount of time (about a second). See [Touch Events](touch-events)."
+            "!doc": "Fired after pressing a widget for a specific amount of time (about a second)."
           },
           "change:bounds": {
             "!doc": "Fired when the widget's size or position has changed."
           },
           "dispose": {
             "!doc": "Fired when the widget is about to be disposed."
-          }
+          },
+          "pan": {
+            "!doc": "Fired when a finger starts moving in the widget."
+          },
+          "pan:left": {
+            "!doc": "Fired when a finger starts moving left in the widget."
+          },
+          "pan:up": {
+            "!doc": "Fired when a finger starts moving up in the widget."
+          },
+          "pan:right": {
+            "!doc": "Fired when a finger starts moving right in the widget."
+          },
+          "pan:down": {
+            "!doc": "Fired when a finger starts moving down in the widget."
+          },
+          "swipe:left": {
+            "!doc": "Fired when a finger moves left quickly."
+          },
+          "swipe:up": {
+            "!doc": "Fired when a finger moves up quickly."
+          },
+          "swipe:right": {
+            "!doc": "Fired when a finger moves right quickly."
+          },
+          "swipe:down": {
+            "!doc": "Fired when a finger moves down quickly."
+          },
+          "tap": {
+            "!doc": "Fired when a widget is tapped."
+          },
         },
         "ButtonEvents": {
-          "selection": {
-            "!doc": "Fired when the button is pressed."
+          "select": {
+            "!doc": "Fired when the button is pressed.  Gives the button as the first parameter."
           }
         },
         "CheckBoxEvents": {
           "change:selection": {
             "!doc": "Fired when the check box is checked or unchecked."
+          },
+          "select": {
+            "!doc": "Fired when the check box is checked or unchecked. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
           }
         },
         "CollectionViewEvents": {
-          "selection": {
-            "!doc": "Fired when a collection item is selected. The event object includes a field `item` that contains the data item that is mapped to the selected cell."
+          "select": {
+            "!doc": "Fired when a collection item is selected. Parameters are: `collectionView`, `item`, `{index: number}`"
+          },
+          "refresh": {
+            "!doc": "Fired when the user requested a refresh. An event listener should reset the `refreshIndicator` property when refresh is finished."
           }
         },
         "ComboEvents": {
@@ -718,12 +847,26 @@
         },
         "RadioButtonEvents": {
           "change:selection": {
-            "!doc": "Fired when the radio button is selected or deselected."
+            "!doc": "Fired when the selection property changes."
+          },
+          "select": {
+            "!doc": "Fired when the radio button is selected or deselected. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+          }
+        },
+        "SearchActionEvents": {
+          "accept": {
+            "!doc": "Fired when a text input has been submitted by pressing the keyboard's search key. The current query text will be given as the second parameter."
+          },
+          "input": {
+            "!doc": "Fired when the search text has changed. The current query text will be given as the second parameter."
           }
         },
         "SliderEvents": {
           "change:selection": {
             "!doc": "Fired when the selection of the slider gets changed."
+          },
+          "select": {
+            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
           }
         },
         "TextEvents": {
@@ -740,14 +883,50 @@
             "!doc": "Fired when the widget gains focus."
           }
         },
+        "TextInputEvents": {
+          "accept": {
+            "!doc": "Fired when a text input has been finished by pressing the keyboard's Enter key. The label of this key may vary depending on the platform and locale. The second parameter contains the widgets text."
+          },
+          "blur": {
+            "!doc": "Fired when the widget lost focus."
+          },
+          "change:text": {
+            "!doc": "Fired when the text property changes, either by `set` or by the user."
+          },
+          "focus": {
+            "!doc": "Fired when the widget gains focus."
+          },
+          "input": {
+            "!doc": "Fired when the text changed by the user. Parameters are the same as in change:text, i.e. `widget`, `text`, `options`."
+          }
+        },
         "ToggleButtonEvents": {
           "change:selection": {
             "!doc": "Fired when the toggle button is selected or deselected."
+          },
+          "select": {
+            "!doc": "Fired when the toggle button is selected or deselected. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
           }
         },
-        "ScrollCompositeEvents": {
+        "PageEvents": {
+          "appear": {
+            "!doc": "Fired when the page is about to become visible, i.e. it has become the active page."
+          },
+          "change:bounds": {
+            "!doc": "Fired when the bounds (i.e. size or orientation) of the page has changed."
+          },
+          "disappear": {
+            "!doc": "Fired when the page is no longer visible, i.e. another page has become the active page."
+          }
+        },
+        "PickerEvents": {
+          "change:selection": {
+            "!doc": "Fired when the selection property of the Picker changes."
+          }
+        },
+        "ScrollViewEvents": {
           "scroll": {
-            "!doc": "Fired on scrolling. The event handler receives an event object containing the properties `x` and `y` that indicate the scrolling position."
+            "!doc": "Fired on scrolling. As the second parameter the event handler receives an object containing the properties `x` and `y` that indicate the scrolling position."
           }
         }
       },
@@ -763,6 +942,23 @@
               "!data": {
                 "!lint": "tabrisGet_lint"
               }
+            },
+            "set" : {
+              "!type" : "fn(name: string, value: ?) -> !this",
+              "!effects" : ["custom tabris_Proxy_set"],
+              "!doc" : "Sets an action property. Returns the action itself.",
+              "!data": {
+                "!lint": "tabrisSet_lint"
+               }
+            },
+            "on" : {
+              "!type" : "fn(type: string, listener: fn()) -> !this",
+              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
+              "!doc" : "Binds a listener function to the action. The listener will be invoked whenever an event of the given event type is fired.",
+              "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
+              "!data": {
+                "!lint": "tabrisEvent_lint"
+              }
             }
           }
         },
@@ -771,7 +967,7 @@
           "prototype" : {
             "get" : {
               "!type" : "fn(name: string) -> !custom:tabris_Proxy_get",
-              "!doc" : "Retrieves the current value of the given property from the widget and returns it.",
+              "!doc" : "Gets the current value of the given property.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codegetnamecode",
               "!data": {
                 "!lint": "tabrisGet_lint"
@@ -780,26 +976,21 @@
             "set" : {
               "!type" : "fn(name: string, value: ?) -> !this",
               "!effects" : ["custom tabris_Proxy_set"],
-              "!doc" : "Sets a widget property. Returns the widget itself.",
+              "!doc" : "Sets the given property.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codesetname-valuecode",
               "!data": {
                 "!lint": "tabrisSet_lint"
                }
             },
             "animate" : {
-              "!type" : "fn(animationProperties: ?, options: ?)",
+              "!type" : "fn(animationProperties: ?, options: ?) -> !this",
               "!doc" : "Changes a number of widget properties with an animation. Currently, only the properties transform and opacity are supported. Does not yet return any value.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codeanimateproperties-optionscode"
             },
             "appendTo" : {
               "!type" : "fn(parent: +types.Widget) -> !this",
-              "!doc" : "Appends the widget to a parent. If the widget already has a parent, it is deregistered from the actual parent and registered with the new one. Returns the widget itself.",
+              "!doc" : "Appends the widget to a parent. If the widget already has a parent, it is de-registered from the actual parent and registered with the new one. Triggers an add event on the parent. Returns the widget itself.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codeappendtoparentcode"
-            },
-            "append" : {
-              "!type" : "fn(child: +types.Widget) -> !this",
-              "!doc" : "Appends one or more child widget to this widget. This method is equivalent to calling appendTo on every child, e.g. parent.append(child1, child2) is a short cut for calling child1.appendTo(parent) and child2.appendTo(parent). Returns the widget itself.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeappendchild-child-code"
             },
             "parent" : {
               "!type" : "fn() -> +types.Widget",
@@ -807,14 +998,23 @@
               "!url" : "https://tabrisjs.com/documentation/widgets#codeparentcode"
             },
             "children" : {
-              "!type" : "fn() -> [+types.Widget]",
-              "!doc" : "Returns the list of children of this widget. The returned array is a copy and can safely be manipulated.",
+              "!type" : "fn(selector?: string) -> +types.WidgetCollection",
+              "!doc" : "Returns the list of children of this widget as a WidgetCollection.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codechildrencode"
             },
             "on" : {
               "!type" : "fn(type: string, listener: fn()) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Binds a listener function to the widget. The listener will be invoked whenever an event of the given event type is fired.",
+              "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
+              "!data": {
+                "!lint": "tabrisEvent_lint"
+              }
+            },
+            "once" : {
+              "!type" : "fn(type: string, listener: fn()) -> !this",
+              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
+              "!doc" : "Same as on, but removes the listener after it has been invoked by an event.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
               "!data": {
                 "!lint": "tabrisEvent_lint"
@@ -840,24 +1040,77 @@
             },
             "dispose" : {
               "!type" : "fn()",
-              "!doc" : "Disposes of the widget, destroys all of its children widgets and triggers a dispose event.",
+              "!doc" : "Disposes of the widget and all of its children. Triggers a remove event on the parent and a dispose event on itself.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codedisposecode"
+            },
+            "isDisposed" : {
+              "!type" : "fn() -> bool",
+              "!doc" : "Returns `true` if the widget has been disposed, otherwise `false`.",
+              "!url" : "https://tabrisjs.com/documentation/widgets#codeisdisposedcode"
+            },
+            "find" : {
+              "!type" : "fn(selector?: string) -> +types.WidgetCollection",
+              "!doc" : "Like children, but returns the list of all descendants of this widget as a WidgetCollection.",
+              "!url" : "https://tabrisjs.com/documentation/selector#widgetlike-api"
+            }
+          }
+        },
+        "WidgetCollection": {
+          "!type" : "fn()",
+          "prototype" : {
+            "first" : {
+              "!type" : "fn()",
+              "!doc" : "Same as `collection[0]`"
+            },
+            "last" : {
+              "!type" : "fn()",
+              "!doc" : "Same as `collection[collection.length - 1]`"
+            },
+            "toArray" : {
+              "!type" : "fn()",
+              "!doc" : "Return an Array containing all widgets in the collection."
+            },
+            "length" : {
+              "!type" : "number",
+              "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/length",
+              "!doc" : "An unsigned, 32-bit integer that specifies the number of elements in an array."
+            },
+            "forEach" : {
+              "!type" : "fn(f: fn(elt: +types.Widget, i: number), context?: ?)",
+              "!effects" : [
+                "call !0 this=!1 !this.<i> number"
+              ],
+              "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/forEach",
+              "!doc" : "Executes a provided function once per array element."
+            },
+            "filter" : {
+              "!type" : "fn(test: fn(elt: +types.Widget, i: number) -> bool, context?: ?) -> !this",
+              "!effects" : [
+                "call !0 this=!1 !this.<i> number"
+              ],
+              "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/filter",
+              "!doc" : "Creates a new array with all elements that pass the test implemented by the provided function."
+            },
+            "indexOf" : {
+              "!type" : "fn(elt: ?, from?: number) -> number",
+              "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/indexOf",
+              "!doc" : "Returns the first index at which a given element can be found in the array, or -1 if it is not present."
             }
           }
         },
         "Page" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/widget-types#page",
-          "!doc" : "Pages contain an application's UI. Top-level pages are included in the application's main menu.",
+          "!doc" : "Pages contain an application's UI.",
           "prototype" : {
             "!proto" : "types.Composite.prototype",
             "open" : {
               "!type" : "fn() -> !this",
-              "!doc" : "Opens the page."
+              "!doc" : "Opens the page, i.e. makes it the active page."
             },
             "close" : {
               "!type" : "fn()",
-              "!doc" : "Closes the page, i.e. disposes of it."
+              "!doc" : "Closes and disposes of the page."
             }
           }
         },
@@ -869,10 +1122,18 @@
             "!proto" : "types.Widget.prototype"
           }
         },
-        "Label" : {
+        "TextView" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#label",
+          "!url": "https://tabrisjs.com/documentation/widget-types#textview",
           "!doc" : "A widget to display a text. For images, use ImageView.",
+          "prototype" : {
+            "!proto" : "types.Widget.prototype"
+          }
+        },
+        "TextInput" : {
+          "!type" : "fn()",
+          "!url": "https://tabrisjs.com/documentation/widget-types#textinput",
+          "!doc" : "A widget that allows to enter text.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
           }
@@ -888,17 +1149,49 @@
         "CollectionView" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/widget-types#collectionview",
-          "!doc" : "A scrollable list that displays data items in cells, one per row. Cells are created on demand and filled with widgets in the 'initializeCell' callback. When a data item is mapped to a cell, the cell receives a 'itemchange' event.",
+          "!doc" : "A scrollable list that displays data items in cells, one per row. Cells are created on demand and filled with widgets in the `initializeCell` callback. When a data item is mapped to a cell, it is set as the property `item` and the cell receives an `change:item` event.",
+          "prototype" : {
+            "!proto" : "types.Widget.prototype",
+            "insert" : {
+              "!type" : "fn(items: [?], index?: number)",
+              "!doc" : "Inserts the given items into this view. Items are added at the end. If `index` is present, inserts the given items into this view at the given index. If a negative index is given, it is interpreted as relative to the end. If the given index is greater than the item count, new items will be appended at the end. This operation will modify the items property."
+            },
+            "remove" : {
+              "!type" : "fn(index: number, count?: number)",
+              "!doc" : "Removes the item at the given index from this view. If a negative index is given, it is interpreted as relative to the end. If `count` is present, removes count items beginning with the given index from this view. This operation will modify the items property."
+            },
+            "refresh" : {
+              "!type" : "fn(index?: number)",
+              "!doc" : "Triggers a refresh of all visible items. This will issue itemchange events on the corresponding cells. If `index` is present, triggers a refresh of the item with the given index. If the item is scrolled into view, an itemchange event will be issued on the corresponding cell."
+            },
+            "reveal" : {
+              "!type" : "fn(index: number)",
+              "!doc" : "Scrolls the item with the given index into view. If a negative index is given, it is interpreted as relative to the end."
+            },
+          }
+        },
+        "Picker" : {
+          "!type" : "fn()",
+          "!url": "https://tabrisjs.com/documentation/widget-types#picker",
+          "!doc" : "A widget with a drop-down list of items to choose from.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
           }
         },
-        "Combo" : {
+        "PageSelector" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#combo",
-          "!doc" : "A widget with a drop-down list of items to choose from. Name is subject to change.",
+          "!url": "https://tabrisjs.com/documentation/widget-types#pageselector",
+          "!doc" : "A CollectionView that contains all top-level pages and allows to open them. New top-level pages are added dynamically.",
           "prototype" : {
-            "!proto" : "types.Widget.prototype"
+            "!proto" : "types.CollectionView.prototype"
+          }
+        },
+        "SearchAction" : {
+          "!type" : "fn()",
+          "!url": "https://tabrisjs.com/documentation/widget-types#searchaction",
+          "!doc" : "An action that displays a search text field with dynamic proposals when selected. Add a listener on `selection` to implement the action. On `modify`, you may set a list of `proposals`.",
+          "prototype" : {
+            "!proto" : "types.Action.prototype"
           }
         },
         "Composite" : {
@@ -906,7 +1199,11 @@
           "!url": "https://tabrisjs.com/documentation/widget-types#composite",
           "!doc" : "An empty widget that can contain other widgets.",
           "prototype" : {
-            "!proto" : "types.Widget.prototype"
+            "!proto" : "types.Widget.prototype",
+            "append" : {
+              "!type" : "fn(widget: +types.Widget, widget?: +types.Widget)",
+              "!doc" : "Adds the given widget(s) in the given order to the composite."
+            },
           }
         },
         "Canvas" : {
@@ -915,6 +1212,22 @@
           "!doc" : "An empty widget to draw graphics on. Can also contain other widgets.",
           "prototype" : {
             "!proto" : "types.Composite.prototype"
+          }
+        },
+        "Drawer" : {
+          "!type" : "fn()",
+          "!url": "https://tabrisjs.com/documentation/widget-types#drawer",
+          "!doc" : "A navigation drawer that can be swiped in from the left edge of the screen. Can contain any kind of widgets. It may be useful to include a `PageSelector` that displays all top-level pages.",
+          "prototype" : {
+            "!proto" : "types.Composite.prototype",
+             "open" : {
+                "!type" : "fn() -> !this",
+                "!doc" : "Opens the drawer."
+              },
+              "close" : {
+                "!type" : "fn()",
+                "!doc" : "Closes the drawer."
+              }
           }
         },
         "ImageView" : {
@@ -936,7 +1249,7 @@
         "RadioButton" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/widget-types#radiobutton",
-          "!doc" : "A radio button. Selecting a radio button deselects all its siblings (i.e. all radio buttons within the same parent). Known Issues: RadioButton is not automatically deselected on iOS",
+          "!doc" : "A radio button. Selecting a radio button deselects all its siblings (i.e. all radio buttons within the same parent).",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
           }
@@ -962,7 +1275,7 @@
           "!url": "https://tabrisjs.com/documentation/widget-types#tab",
           "!doc" : "A container representing a single tab of the TabFolder widget.",
           "prototype" : {
-            "!proto" : "types.Widget.prototype"
+            "!proto" : "types.Composite.prototype"
           }
         },
         "Text" : {
@@ -981,10 +1294,18 @@
             "!proto" : "types.Widget.prototype"
           }
         },
-        "ScrollComposite" : {
+        "ScrollView" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#scrollcomposite",
-          "!doc" : "A composite that allows its content to overflow either vertically (default) or horizontally.",
+          "!url": "https://tabrisjs.com/documentation/widget-types#scrollview",
+          "!doc" : "A composite that allows its content to overflow either vertically (default) or horizontally. Children of a ScrollView may not be attached to its edge in scrolling direction (to the bottom for vertical scrolling, to the right for horizontal scrolling).",
+          "prototype" : {
+            "!proto" : "types.Composite.prototype"
+          }
+        },
+        "Video" : {
+          "!type" : "fn()",
+          "!url": "https://tabrisjs.com/documentation/widget-types#video",
+          "!doc" : "A widget that plays a video from a URL.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
           }
@@ -997,7 +1318,7 @@
             "!proto" : "types.Widget.prototype"
           }
         }
-      }      
+      }
     },
     "tabris" : {
       "create" : {
@@ -1005,7 +1326,7 @@
         "!doc" : "Creates a native widget of a given type and returns its reference.",
         "!url" : "https://tabrisjs.com/documentation/widgets#codetabriscreatetype-propertiescode",
         "!data": {
-          "!lint": "tabrisCreate_lint"  
+          "!lint": "tabrisCreate_lint"
         }
       }
     }
