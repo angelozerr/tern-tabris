@@ -1086,6 +1086,8 @@
         },
         "WidgetCollection": {
           "!type" : "fn()",
+          "!doc" : "A \"WidgetCollection\" is an array-like object representing a set of widgets, as returned by the widget methods \"children\" and \"find\".",
+          "!url": "https://tabrisjs.com/documentation/selector#widgetcollection",
           "prototype" : {
             "first" : {
               "!type" : "fn()",
