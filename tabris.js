@@ -7,7 +7,7 @@
   mod(tern, tern);
 })(function(infer, tern) {
   "use strict";
-""
+
   var defaultRules = {
     "UnknownTabrisType" : {"severity" : "error"},
     "UnknownTabrisProperty" : {"severity" : "error"},
@@ -494,11 +494,11 @@
           },
           "markupEnabled": {
             "!type": "bool",
-            "!doc": "Allows for a subset of HTML tags in the label text. Supported tags are: `a`, `del`, `ins`, `b`, `i`, `strong`, `em`, `big`, `small`, `br`. All tags must be closed (e.g. use <br/> instead of <br>). Nesting tags is currently not supported. This property must be set in the **create** method. It cannot be changed after widget creation."
+            "!doc": "Allows for a subset of HTML tags in the label text. Supported tags are: \"a\", \"del\", \"ins\", \"b\", \"i\", \"strong\", \"em\", \"big\", \"small\", \"br\". All tags must be closed (e.g. use <br/> instead of <br>). Nesting tags is currently not supported. This property must be set in the \"create\" method. It cannot be changed after widget creation."
           },
           "maxLines": {
             "!type": "number",
-            "!doc": "Limit the number of lines to be displayed to the given maximum. `null` disables this limit."
+            "!doc": "Limit the number of lines to be displayed to the given maximum. \"null\" disables this limit."
           },
           "text" : {
             "!type" : "string",
@@ -508,7 +508,7 @@
         "TextInputProperties": {
           "alignment" : {
             "!type" : "string",
-            "!doc" : "The horizontal alignment of the text. Supported values: `left`, `right`, `center`, default: `left`."
+            "!doc" : "The horizontal alignment of the text. Supported values: \"left\", \"right\", \"center\", default: \"left\"."
           },
           "autoCapitalize": {
             "!type": "bool",
@@ -524,7 +524,7 @@
           },
           "keyboard": {
             "!type": "string",
-            "!doc": "Selects the keyboard type to use for editing this widget. Supported values: `ascii`, `decimal`, `email`, `number`, `numbersAndPunctuation`, `phone`, `url`, `default`, "
+            "!doc": "Selects the keyboard type to use for editing this widget. Supported values: \"ascii\", \"decimal\", \"email\", \"number\", \"numbersAndPunctuation\", \"phone\", \"url\", \"default\", "
           },
           "message": {
             "!type": "string",
@@ -536,7 +536,7 @@
           },
           "type": {
             "!type": "string",
-            "!doc": "The type of the text widget. This property can only be set in the `tabris.create` method. It cannot be changed after widget creation. Supported values: `default`, `password`, `search`, `multiline`, default: `default`."
+            "!doc": "The type of the text widget. This property can only be set in the \"tabris.create\" method. It cannot be changed after widget creation. Supported values: \"default\", \"password\", \"search\", \"multiline\", default: \"default\"."
           }
         },
         "CheckBoxProperties": {
@@ -552,7 +552,7 @@
         "CollectionViewProperties": {
           "initializeCell" : {
             "!type" : "fn()",
-            "!doc" : "A callback used to initialize a collection cell. Cells are created by the framework and recycled on scrolling. This callback receives an empty collection cell as an argument and appends widgets to it. The cell triggers an `itemchange` event (*name subject to change*) with a single element from the items array as a callback argument."
+            "!doc" : "A callback used to initialize a collection cell. Cells are created by the framework and recycled on scrolling. This callback receives an empty collection cell as an argument and appends widgets to it. The cell triggers an \"itemchange\" event (name subject to change) with a single element from the items array as a callback argument."
           },
           "itemHeight" : {
             "!type" : "number",
@@ -560,7 +560,7 @@
           },
           "items" : {
             "!type" : "[?]",
-            "!doc" : "An array of data items to be displayed by the collection view. For dynamic content, use the methods `insert` and `remove` instead of setting this property directly."
+            "!doc" : "An array of data items to be displayed by the collection view. For dynamic content, use the methods \"insert\" and \"remove\" instead of setting this property directly."
           },
           "refreshEnabled" : {
             "!type" : "bool",
@@ -568,7 +568,7 @@
           },
           "refreshIndicator" : {
             "!type" : "bool",
-            "!doc" : "Whether the refresh indicator is currently visible. Will be set to `true` when a `refresh` event is triggered. Reset it to `false` when the refresh is finished."
+            "!doc" : "Whether the refresh indicator is currently visible. Will be set to \"true\" when a \"refresh\" event is triggered. Reset it to \"false\" when the refresh is finished."
           },
           "refreshMessage" : {
             "!type" : "string",
@@ -596,25 +596,25 @@
           },
           "scaleMode" : {
             "!type" : "string",
-            "!doc" : "The scale mode of the image in the ImageView. Supported values: `auto`, `fit`, `fill`, `stretch`, `none`, default: `auto`"
+            "!doc" : "The scale mode of the image in the ImageView. Supported values: \"auto\", \"fit\", \"fill\", \"stretch\", \"none\", default: \"auto\""
           }
         },
         "ProgressBarProperties": {
           "maximum" : {
             "!type" : "number",
-            "!doc" : "The maximal numeric value of the progress bar, default: `100`"
+            "!doc" : "The maximal numeric value of the progress bar, default: \"100\""
           },
           "minimum" : {
             "!type" : "number",
-            "!doc" : "The minimal numeric value of the progress bar, default: `0`"
+            "!doc" : "The minimal numeric value of the progress bar, default: \"0\""
           },
           "selection" : {
             "!type" : "number",
-            "!doc" : "The current progress bar value. Default: `0`"
+            "!doc" : "The current progress bar value. Default: \"0\""
           },
           "state" : {
             "!type" : "string",
-            "!doc" : "The state of the progress bar. Supported values: `normal`, `paused`, `error`, default: `normal`"
+            "!doc" : "The state of the progress bar. Supported values: \"normal\", \"paused\", \"error\", default: \"normal\""
           }
         },
         "RadioButtonProperties": {
@@ -630,15 +630,15 @@
         "SearchActionProperties": {
           "proposals" : {
             "!type" : "[string]",
-            "!doc" : "The list of proposals to display. Default: `[]`."
+            "!doc" : "The list of proposals to display. Default: \"[]\"."
           },
           "minimum" : {
             "!type" : "number",
-            "!doc" : "The minimal numeric value of the slider, default: `0`"
+            "!doc" : "The minimal numeric value of the slider, default: \"0\""
           },
           "selection" : {
             "!type" : "number",
-            "!doc" : "The current slider value. Default: `0`"
+            "!doc" : "The current slider value. Default: \"0\""
           },
           "text" : {
             "!type" : "string",
@@ -652,15 +652,15 @@
         "SliderProperties": {
           "maximum" : {
             "!type" : "number",
-            "!doc" : "The maximal numeric value of the slider, default: `100`"
+            "!doc" : "The maximal numeric value of the slider, default: \"100\""
           },
           "minimum" : {
             "!type" : "number",
-            "!doc" : "The minimal numeric value of the slider, default: `0`"
+            "!doc" : "The minimal numeric value of the slider, default: \"0\""
           },
           "selection" : {
             "!type" : "number",
-            "!doc" : "The current slider value. Default: `0`"
+            "!doc" : "The current slider value. Default: \"0\""
           },
         },
         "TabFolderProperties": {
@@ -674,7 +674,7 @@
           },
           "tabBarLocation" : {
             "!type" : "string",
-            "!doc" : "The placement of the tab titles. When set to `auto`, the position is platform dependent. Can only be set in the create method. Supported values: `top`, `bottom`, `auto`, default: `auto`"
+            "!doc" : "The placement of the tab titles. When set to \"auto\", the position is platform dependent. Can only be set in the create method. Supported values: \"top\", \"bottom\", \"auto\", default: \"auto\""
           },
         },
         "TabProperties": {
@@ -710,13 +710,13 @@
           },
           "textType" : {
             "!type" : "string",
-            "!doc" : "The type of the text widget. Can only be set in the `create` method. Supported values: `default`, `password`, `search`, `multiline`, default: `default`."
+            "!doc" : "The type of the text widget. Can only be set in the \"create\" method. Supported values: \"default\", \"password\", \"search\", \"multiline\", default: \"default\"."
           }
         },
         "ToggleButtonProperties": {
           "alignment" : {
             "!type" : "string",
-            "!doc" : "The horizontal alignment of the button text. Supported values: `left`, `right`, `center`, default: `center`"
+            "!doc" : "The horizontal alignment of the button text. Supported values: \"left\", \"right\", \"center\", default: \"center\""
           },
           "image" : {
             "!type" : "!propertyTypes.Image",
@@ -734,7 +734,7 @@
         "ScrollViewProperties": {
           "direction" : {
             "!type" : "string",
-            "!doc" : "Specifies the scrolling direction of the scroll composite. This property can only be set in the `tabris.create` method. It cannot be changed after widget creation. Supported values: `vertical`, `horizontal`, default: `vertical`."
+            "!doc" : "Specifies the scrolling direction of the scroll composite. This property can only be set in the \"tabris.create\" method. It cannot be changed after widget creation. Supported values: \"vertical\", \"horizontal\", default: \"vertical\"."
           }
         },
         "VideoProperties": {
@@ -750,7 +750,7 @@
           },
           "url" : {
             "!type" : "string",
-            "!doc" : "The URL of the web page to display. Returns empty string when content from `html` property is displayed."
+            "!doc" : "The URL of the web page to display. Returns empty string when content from \"html\" property is displayed."
           }
         }
       },
@@ -829,15 +829,15 @@
             "!doc": "Fired when the check box is checked or unchecked."
           },
           "select": {
-            "!doc": "Fired when the check box is checked or unchecked. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+            "!doc": "Fired when the check box is checked or unchecked. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "CollectionViewEvents": {
           "select": {
-            "!doc": "Fired when a collection item is selected. Parameters are: `collectionView`, `item`, `{index: number}`"
+            "!doc": "Fired when a collection item is selected. Parameters are: \"collectionView\", \"item\", \"{index: number}\""
           },
           "refresh": {
-            "!doc": "Fired when the user requested a refresh. An event listener should reset the `refreshIndicator` property when refresh is finished."
+            "!doc": "Fired when the user requested a refresh. An event listener should reset the \"refreshIndicator\" property when refresh is finished."
           }
         },
         "CompositeEvents": {
@@ -853,7 +853,7 @@
             "!doc": "Fired when the selection property changes."
           },
           "select": {
-            "!doc": "Fired when the radio button is selected or deselected. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+            "!doc": "Fired when the radio button is selected or deselected. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "SearchActionEvents": {
@@ -869,7 +869,7 @@
             "!doc": "Fired when the selection of the slider gets changed."
           },
           "select": {
-            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "TabFolderEvents": {
@@ -877,7 +877,7 @@
             "!doc": "Fired when the selection of the slider gets changed."
           },
           "select": {
-            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "TextEvents": {
@@ -902,13 +902,13 @@
             "!doc": "Fired when the widget lost focus."
           },
           "change:text": {
-            "!doc": "Fired when the text property changes, either by `set` or by the user."
+            "!doc": "Fired when the text property changes, either by \"set\" or by the user."
           },
           "focus": {
             "!doc": "Fired when the widget gains focus."
           },
           "input": {
-            "!doc": "Fired when the text changed by the user. Parameters are the same as in change:text, i.e. `widget`, `text`, `options`."
+            "!doc": "Fired when the text changed by the user. Parameters are the same as in change:text, i.e. \"widget\", \"text\", \"options\"."
           }
         },
         "ToggleButtonEvents": {
@@ -916,7 +916,7 @@
             "!doc": "Fired when the toggle button is selected or deselected."
           },
           "select": {
-            "!doc": "Fired when the toggle button is selected or deselected. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+            "!doc": "Fired when the toggle button is selected or deselected. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "PageEvents": {
@@ -935,15 +935,15 @@
             "!doc": "Fired when the selectionIndex property changes."
           },
           "change:selection": {
-            "!doc": "Fired when the selection property changes. The index of the selected item is given in the options object as `index`."
+            "!doc": "Fired when the selection property changes. The index of the selected item is given in the options object as \"index\"."
           },
           "select": {
-            "!doc": "Fired an item was selected by the user. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+            "!doc": "Fired an item was selected by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "ScrollViewEvents": {
           "scroll": {
-            "!doc": "Fired on scrolling. As the second parameter the event handler receives an object containing the properties `x` and `y` that indicate the scrolling position."
+            "!doc": "Fired on scrolling. As the second parameter the event handler receives an object containing the properties \"x\" and \"y\" that indicate the scrolling position."
           }
         }
       },
@@ -1074,7 +1074,7 @@
             },
             "isDisposed" : {
               "!type" : "fn() -> bool",
-              "!doc" : "Returns `true` if the widget has been disposed, otherwise `false`.",
+              "!doc" : "Returns \"true\" if the widget has been disposed, otherwise \"false\".",
               "!url" : "https://tabrisjs.com/documentation/widgets#codeisdisposedcode"
             },
             "find" : {
@@ -1091,11 +1091,11 @@
           "prototype" : {
             "first" : {
               "!type" : "fn()",
-              "!doc" : "Same as `collection[0]`"
+              "!doc" : "Same as \"collection[0]\""
             },
             "last" : {
               "!type" : "fn()",
-              "!doc" : "Same as `collection[collection.length - 1]`"
+              "!doc" : "Same as \"collection[collection.length - 1]\""
             },
             "toArray" : {
               "!type" : "fn()",
@@ -1180,20 +1180,20 @@
         "CollectionView" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/widget-types#collectionview",
-          "!doc" : "A scrollable list that displays data items in cells, one per row. Cells are created on demand and filled with widgets in the `initializeCell` callback. When a data item is mapped to a cell, it is set as the property `item` and the cell receives an `change:item` event.",
+          "!doc" : "A scrollable list that displays data items in cells, one per row. Cells are created on demand and filled with widgets in the \"initializeCell\" callback. When a data item is mapped to a cell, it is set as the property \"item\" and the cell receives an \"change:item\" event.",
           "prototype" : {
             "!proto" : "types.Widget.prototype",
             "insert" : {
               "!type" : "fn(items: [?], index?: number)",
-              "!doc" : "Inserts the given items into this view. Items are added at the end. If `index` is present, inserts the given items into this view at the given index. If a negative index is given, it is interpreted as relative to the end. If the given index is greater than the item count, new items will be appended at the end. This operation will modify the items property."
+              "!doc" : "Inserts the given items into this view. Items are added at the end. If \"index\" is present, inserts the given items into this view at the given index. If a negative index is given, it is interpreted as relative to the end. If the given index is greater than the item count, new items will be appended at the end. This operation will modify the items property."
             },
             "remove" : {
               "!type" : "fn(index: number, count?: number)",
-              "!doc" : "Removes the item at the given index from this view. If a negative index is given, it is interpreted as relative to the end. If `count` is present, removes count items beginning with the given index from this view. This operation will modify the items property."
+              "!doc" : "Removes the item at the given index from this view. If a negative index is given, it is interpreted as relative to the end. If \"count\" is present, removes count items beginning with the given index from this view. This operation will modify the items property."
             },
             "refresh" : {
               "!type" : "fn(index?: number)",
-              "!doc" : "Triggers a refresh of all visible items. This will issue itemchange events on the corresponding cells. If `index` is present, triggers a refresh of the item with the given index. If the item is scrolled into view, an itemchange event will be issued on the corresponding cell."
+              "!doc" : "Triggers a refresh of all visible items. This will issue itemchange events on the corresponding cells. If \"index\" is present, triggers a refresh of the item with the given index. If the item is scrolled into view, an itemchange event will be issued on the corresponding cell."
             },
             "reveal" : {
               "!type" : "fn(index: number)",
@@ -1245,7 +1245,7 @@
             "!proto" : "types.Composite.prototype",
             "getContext": {
               "!type": "fn(contextType: string, width: number, height: number) -> +types.CanvasContext",
-              "!doc" : "Returns the drawing context. The `contextType` must be `2d`."
+              "!doc" : "Returns the drawing context. The \"contextType\" must be \"2d\"."
             }
           }
         },
@@ -1288,7 +1288,7 @@
         "Drawer" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/widget-types#drawer",
-          "!doc" : "A navigation drawer that can be swiped in from the left edge of the screen. Can contain any kind of widgets. It may be useful to include a `PageSelector` that displays all top-level pages.",
+          "!doc" : "A navigation drawer that can be swiped in from the left edge of the screen. Can contain any kind of widgets. It may be useful to include a \"PageSelector\" that displays all top-level pages.",
           "prototype" : {
             "!proto" : "types.Composite.prototype",
              "open" : {
