@@ -14,7 +14,7 @@
     "UnknownTabrisEvent" : {"severity" : "error"}
   };
 
-  var notCreatable = ["Widget", "WidgetCollection"];
+  var notCreatable = ["Widget", "WidgetCollection", "CanvasContext"];
 
   function registerLints() {
     if (!tern.registerLint) return;
@@ -1211,7 +1211,47 @@
           "!url": "https://tabrisjs.com/documentation/widget-types#canvas",
           "!doc" : "An empty widget to draw graphics on. Can also contain other widgets.",
           "prototype" : {
-            "!proto" : "types.Composite.prototype"
+            "!proto" : "types.Composite.prototype",
+            "getContext": {
+              "!type": "fn(contextType: string, width: number, height: number) -> +types.CanvasContext",
+              "!doc" : "Returns the drawing context. The `contextType` must be `2d`."
+            }
+          }
+        },
+        "CanvasContext": {
+          "!type" : "fn()",
+          "!url": "https://tabrisjs.com/documentation/widget-types#canvas",
+          "prototype": {
+            "save": "fn()",
+            "restore": "fn()",
+            "scale": "fn(x: number, y: number)",
+            "rotate": "fn(angle: number)",
+            "translate": "fn(x: number, y: number)",
+            "transform": "fn(a: number, b: number, c: number, d: number, e: number, f: number)",
+            "setTransform": "fn(a: number, b: number, c: number, d: number, e: number, f: number)",
+            "strokeStyle": "string",
+            "fillStyle": "string",
+            "clearRect": "fn(x: number, y: number, w: number, h: number)",
+            "fillRect": "fn(x: number, y: number, w: number, h: number)",
+            "strokeRect": "fn(x: number, y: number, w: number, h: number)",
+            "fill": "fn()",
+            "beginPath": "fn()",
+            "stroke": "fn()",
+            "fillText": "fn(text: string, x: number, y: number, maxWidth: number)",
+            "strokeText": "fn(text: string, x: number, y: number, maxWidth: number)",
+            "measureText": "fn(text: string) -> ?",
+            "lineWidth": "number",
+            "lineCap": "string",
+            "lineJoin": "string",
+            "textAlign": "string",
+            "textBaseline": "string",
+            "closePath": "fn()",
+            "moveTo": "fn(x: number, y: number)",
+            "lineTo": "fn(x: number, y: number)",
+            "quadraticCurveTo": "fn(cpx: number, cpy: number, x: number, y: number)",
+            "bezierCurveTo": "fn(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number)",
+            "rect": "fn(x: number, y: number, w: number, h: number)",
+            "arc": "fn(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: bool)",
           }
         },
         "Drawer" : {

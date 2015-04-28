@@ -1,6 +1,7 @@
 exports['test tabris Tern completion'] = require('./test_completion');
 exports['test tabris Action'] = require('./test_Action');
 exports['test tabris Button'] = require('./test_Button');
+exports['test tabris Canvas'] = require('./test_Canvas');
 exports['test tabris CheckBox'] = require('./test_CheckBox');
 exports['test tabris CollectionView'] = require('./test_CollectionView');
 exports['test tabris Composite'] = require('./test_Composite');
