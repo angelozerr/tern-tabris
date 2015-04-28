@@ -388,7 +388,7 @@
             "!type": "bool",
             "!doc": "Whether the action can be invoked."
           },
-          "foreground": {
+          "textColor": {
             "!type": "!propertyTypes.Color",
             "!doc": "Text color of the action."
           },
@@ -442,7 +442,7 @@
             "!type" : "!propertyTypes.Color",
             "!doc" : "Background color of the widget."
           },
-          "foreground" : {
+          "textColor" : {
             "!type" : "!propertyTypes.Color",
             "!doc" : "Text color of the widget."
           },

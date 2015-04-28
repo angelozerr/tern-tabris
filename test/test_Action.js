@@ -4,7 +4,7 @@ var inheriting = ["SearchAction"];
 
 var properties = [
   {name: "enabled", type: "bool"},
-  {name: "foreground", type: "Color"},
+  {name: "textColor", type: "Color"},
   {name: "image", type: "Image"},
   {name: "placementPriority", type: "string"},
   {name: "title", type: "string"},

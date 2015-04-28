@@ -25,7 +25,7 @@ var properties = [
   {name: "bounds", type: "Bounds"},
   {name: "enabled", type: "bool"},
   {name: "font", type: "Font"},
-  {name: "foreground", type: "Color"},
+  {name: "textColor", type: "Color"},
   {name: "highlightOnTouch", type: "bool"},
   {name: "id", type: "string"},
   {name: "layoutData", type: "LayoutData"},
