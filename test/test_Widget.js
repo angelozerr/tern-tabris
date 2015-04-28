@@ -37,7 +37,7 @@ var properties = [
 var functions = [
   {name: "set", type: "fn(name: string, value: ?)", returnType: "Widget"},
   {name: "get", type: "fn(name: string)"},
-  {name: "animate", type: "fn(animationProperties: ?, options: ?)", returnType: "Widget"},
+  {name: "animate", type: "fn(animationProperties: ?, options: ?)"},
   {name: "appendTo", type: "fn(parent: types.Widget)", returnType: "Widget"},
   {name: "parent", type: "fn() -> types.Widget", returnType: "Widget"},
   {name: "children", type: "fn(selector?: string) -> types.WidgetCollection", returnType: "WidgetCollection"},

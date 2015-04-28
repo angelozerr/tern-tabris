@@ -992,7 +992,7 @@
                }
             },
             "animate" : {
-              "!type" : "fn(animationProperties: ?, options: ?) -> !this",
+              "!type" : "fn(animationProperties: ?, options: ?)",
               "!doc" : "Changes a number of widget properties with an animation. Currently, only the properties transform and opacity are supported. Does not yet return any value.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codeanimateproperties-optionscode"
             },
