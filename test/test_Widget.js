@@ -35,6 +35,9 @@ var properties = [
 ];
 
 var functions = [
+  {name: "id", type: "string"},
+  {name: "cid", type: "string"},
+  {name: "type", type: "string"},
   {name: "set", type: "fn(name: string, value: ?)", returnType: "Widget"},
   {name: "get", type: "fn(name: string)"},
   {name: "animate", type: "fn(animationProperties: ?, options: ?)"},

@@ -7,7 +7,7 @@
   mod(tern, tern);
 })(function(infer, tern) {
   "use strict";
-
+""
   var defaultRules = {
     "UnknownTabrisType" : {"severity" : "error"},
     "UnknownTabrisProperty" : {"severity" : "error"},
@@ -982,6 +982,18 @@
         "Widget" : {
           "!type" : "fn()",
           "prototype" : {
+            "id" : {
+              "!type": "string",
+              "!doc": "Direct access to the value of the property of the same name. May be used instead of \"widget.get(\"id\");\" Do not use this field to change the value, instead use \"widget.set(\"id\", id);\"."
+            },
+            "cid" : {
+              "!type": "string",
+              "!doc": "An application-wide unique identifier automatically assigned to all widgets on creation. Do not change it."
+            },
+            "type" : {
+              "!type": "string",
+              "!doc": "The exact string that was used to create this widget using the \"tabris.create\" method."
+            },
             "get" : {
               "!type" : "fn(name: string) -> !custom:tabris_Proxy_get",
               "!doc" : "Gets the current value of the given property.",

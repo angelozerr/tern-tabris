@@ -102,8 +102,8 @@ exports.runCommonTests = function(type, testData) {
         function() {exports.assertProperty(type, {type: property.type, name: property.name});};
     });
   }
-  if(testData.functions) {
-    testData.functions.forEach(function(fn) {
+  if(testData.prototype) {
+    testData.prototype.forEach(function(fn) {
       _exports['test ' + fn.name + ' function completion'] =
         function() {exports.assertFunction(type, {name: fn.name, type: fn.type, returnType: fn.returnType});};
     });

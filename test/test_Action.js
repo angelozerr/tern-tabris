@@ -13,12 +13,12 @@ var properties = [
 
 var events = [{name: "select", origin: "Action"}];
 
-var functions = [{name: "on", type: "fn(type: string, listener: fn())", returnType: "Action"}];
+var prototype = [{name: "on", type: "fn(type: string, listener: fn())", returnType: "Action"}];
 
 module.exports = util.runCommonTests("Action", {
   properties: properties,
   events: events,
-  functions: functions,
+  prototype: prototype,
   inheriting: inheriting
 });
 

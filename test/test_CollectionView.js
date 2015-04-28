@@ -2,7 +2,7 @@ var util = require("./util");
 
 var inheriting = ["PageSelector"];
 
-var functions = [
+var prototype = [
   {name: "insert", type: "fn(items: [?], index?: number)"},
   {name: "remove", type: "fn(index: number, count?: number)"},
   {name: "refresh", type: "fn(index?: number)"},
@@ -20,7 +20,7 @@ var events = [{name: "refresh", origin: "CollectionView"}, {name: "select", orig
 
 module.exports = util.runCommonTests("CollectionView", {
   properties: properties,
-  functions: functions,
+  prototype: prototype,
   events: events,
   inheriting: inheriting
 });

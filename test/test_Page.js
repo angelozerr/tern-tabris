@@ -6,13 +6,13 @@ var properties = [
   {name: "topLevel", type: "bool"}
 ];
 
-var functions = [
+var prototype = [
   {name: "close", type: "fn()"},
   {name: "open", type: "fn()"}
 ];
 
 var events = [{name: "appear"}, {name: "resize"}, {name: "disappear"}];
 
-module.exports = util.runCommonTests("Page", {properties: properties, events: events, functions: functions});
+module.exports = util.runCommonTests("Page", {properties: properties, events: events, prototype: prototype});
 
 if (module === require.main) require("test").run(exports);
