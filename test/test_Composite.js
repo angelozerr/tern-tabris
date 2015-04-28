@@ -1,6 +1,6 @@
 var util = require("./util");
 
-var inheriting = ["Canvas", "Drawer", "ScrollView", "Tab"];
+var inheriting = ["Canvas", "Drawer", "Page", "ScrollView", "Tab"];
 
 var functions = [
   {name: "append", type: "fn(widget: types.Widget, widget?: types.Widget)"}

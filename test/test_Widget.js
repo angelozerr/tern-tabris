@@ -53,7 +53,7 @@ var functions = [
 var events = [
   {name: "animationend", origin: "Widget"},
   {name: "animationstart", origin: "Widget"},
-  {name: "change:bounds", origin: "Widget"},
+  {name: "resize", origin: "Widget"},
   {name: "dispose", origin: "Widget"},
   {name: "longpress", origin: "Widget"},
   {name: "pan", origin: "Widget"},

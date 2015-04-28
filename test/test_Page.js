@@ -11,7 +11,7 @@ var functions = [
   {name: "open", type: "fn()"}
 ];
 
-var events = [{name: "appear"}, {name: "change:bounds"}, {name: "disappear"}];
+var events = [{name: "appear"}, {name: "resize"}, {name: "disappear"}];
 
 module.exports = util.runCommonTests("Page", {properties: properties, events: events, functions: functions});
 

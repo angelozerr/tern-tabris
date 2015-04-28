@@ -774,8 +774,8 @@
           "longpress": {
             "!doc": "Fired after pressing a widget for a specific amount of time (about a second)."
           },
-          "change:bounds": {
-            "!doc": "Fired when the widget's size or position has changed."
+          "resize": {
+            "!doc": "Fired when the widget's size has changed. You can use this event to apply new layoutData."
           },
           "dispose": {
             "!doc": "Fired when the widget is about to be disposed."
@@ -912,8 +912,8 @@
           "appear": {
             "!doc": "Fired when the page is about to become visible, i.e. it has become the active page."
           },
-          "change:bounds": {
-            "!doc": "Fired when the bounds (i.e. size or orientation) of the page has changed."
+          "resize": {
+            "!doc": "Fired when the page's size has changed. You can use this event to apply new layoutData."
           },
           "disappear": {
             "!doc": "Fired when the page is no longer visible, i.e. another page has become the active page."
