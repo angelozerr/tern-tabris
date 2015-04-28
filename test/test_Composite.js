@@ -6,7 +6,7 @@ var functions = [
   {name: "append", type: "fn(widget: types.Widget, widget?: types.Widget)"}
 ];
 
-var events = [{name: "add", origin: "Composite"}, {name: "remove", origin: "Composite"}];
+var events = [{name: "addchild", origin: "Composite"}, {name: "removechild", origin: "Composite"}];
 
 module.exports = util.runCommonTests("Composite", {functions: functions, events: events, inheriting: inheriting});
 

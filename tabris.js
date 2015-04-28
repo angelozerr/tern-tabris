@@ -841,10 +841,10 @@
           }
         },
         "CompositeEvents": {
-          "add": {
+          "addchild": {
             "!doc": "Fired when a child is added. Arguments are (child, composite, {})."
           },
-          "remove": {
+          "removechild": {
             "!doc": "Fired when a child is removed. Arguments are (child, composite, {index: number})."
           }
         },
