@@ -578,15 +578,15 @@
         "PickerProperties": {
           "items" : {
             "!type" : "[string]",
-            "!doc" : "Array of strings containing the combo items."
+            "!doc" : "Array of strings containing the picker items."
           },
           "selectionIndex" : {
             "!type" : "number",
-            "!doc" : "Index of the currently selected combo item."
+            "!doc" : "Index of the currently selected picker item."
           },
-          "text" : {
+          "selection" : {
             "!type" : "string",
-            "!doc" : "Text of the selected combo item."
+            "!doc" : "Text of the selected picker item."
           }
         },
         "ImageViewProperties": {
@@ -832,11 +832,6 @@
             "!doc": "Fired when the user requested a refresh. An event listener should reset the `refreshIndicator` property when refresh is finished."
           }
         },
-        "ComboEvents": {
-          "change:selection": {
-            "!doc": "Fired when the selected combo item gets changed."
-          }
-        },
         "CompositeEvents": {
           "add": {
             "!doc": "Fired when a child is added. Arguments are (child, composite, {})."
@@ -920,8 +915,14 @@
           }
         },
         "PickerEvents": {
+          "change:selectionIndex": {
+            "!doc": "Fired when the selectionIndex property changes."
+          },
           "change:selection": {
-            "!doc": "Fired when the selection property of the Picker changes."
+            "!doc": "Fired when the selection property changes. The index of the selected item is given in the options object as `index`."
+          },
+          "select": {
+            "!doc": "Fired an item was selected by the user. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
           }
         },
         "ScrollViewEvents": {

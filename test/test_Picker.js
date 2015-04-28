@@ -3,10 +3,14 @@ var util = require("./util");
 var properties = [
   {name: "items", type: "array"},
   {name: "selectionIndex", type: "number"},
-  {name: "text", type: "string"}
+  {name: "selection", type: "string"}
 ];
 
-var events = [{name: "change:selection"}];
+var events = [
+  {name: "change:selectionIndex"},
+  {name: "change:selection"},
+  {name: "select"}
+];
 
 module.exports = util.runCommonTests("Picker", {properties: properties, events: events});
 
