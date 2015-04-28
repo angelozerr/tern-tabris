@@ -1,7 +1,8 @@
 var util = require("./util");
 
 var properties = [
-  {name: "proposals", type: "array"}
+  {name: "proposals", type: "array"},
+  {name: "text", type: "string"}
 ];
 
 var events = [{name: "accept"}, {name: "input"}];

@@ -640,6 +640,10 @@
             "!type" : "number",
             "!doc" : "The current slider value. Default: `0`"
           },
+          "text" : {
+            "!type" : "string",
+            "!doc" : "The text in the search input field."
+          },
         },
         "SliderProperties": {
           "maximum" : {
