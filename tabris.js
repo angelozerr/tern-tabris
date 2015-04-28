@@ -528,11 +528,11 @@
           },
           "message": {
             "!type": "string",
-            "!doc": "Displayed only when the field is empty."
+            "!doc": "A hint text that is displayed when the input field is empty."
           },
           "text": {
             "!type": "string",
-            "!doc": "Displayed input text."
+            "!doc": "The text in the input field."
           },
           "type": {
             "!type": "string",
@@ -644,6 +644,10 @@
             "!type" : "string",
             "!doc" : "The text in the search input field."
           },
+          "message" : {
+            "!type" : "string",
+            "!doc" : "A hint text that is displayed when the search input is empty."
+          }
         },
         "SliderProperties": {
           "maximum" : {
