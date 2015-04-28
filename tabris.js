@@ -398,7 +398,7 @@
           },
           "placementPriority": {
             "!type": "string",
-            "!doc": "Actions with higher placement priority will be placed at a more significant position in the UI, e.g. low priority actions could go into a menu instead of being included in a toolbar."
+            "!doc": "Actions with higher placement priority will be placed at a more significant position in the UI, e.g. low priority actions could go into a menu instead of being included in a toolbar. Supported values: \"low\", \"high\", \"normal\", default: \"normal\"."
           },
           "title": {
             "!type": "string",
@@ -416,11 +416,11 @@
           },
           "enabled" : {
             "!type" : "bool",
-            "!doc" : "Whether the widget can be operated."
+            "!doc" : "Whether the widget can be operated. Default: \"true\""
           },
           "visible" : {
             "!type" : "bool",
-            "!doc" : "Whether the widget is visible."
+            "!doc" : "Whether the widget is visible. Default: \"true\""
           },
           "layoutData" : {
             "!type" : "!propertyTypes.LayoutData",
@@ -448,21 +448,21 @@
           },
           "opacity" : {
             "!type" : "number",
-            "!doc" : "Opacity of the entire widget. Can be used for fade animations."
+            "!doc" : "Opacity of the entire widget. Can be used for fade animations. Default: \"1\"."
           },
           "transform" : {
             "!type" : "!propertyTypes.Transformation",
-            "!doc" : "Modifications to the widget's shape, size, or position. Can be used for animations."
+            "!doc" : "Modifications to the widget's shape, size, or position. Can be used for animations. Note: In Android the \"transform\" property does not affect the \"bounds\" property, while it does so in iOS."
           },
           "highlightOnTouch" : {
             "!type" : "bool",
-            "!doc" : "Whether the entire widget should be highlighted while touched."
+            "!doc" : "Whether the entire widget should be highlighted while touched. Default: \"false\"."
           }
         },
         "ButtonProperties" : {
           "alignment" : {
             "!type" : "string",
-            "!doc" : "The horizontal alignment of the button text."
+            "!doc" : "The horizontal alignment of the button text. Supported values: \"left\", \"right\", \"center\", default: \"center\"."
           },
           "image" : {
             "!type" : "!propertyTypes.Image",
@@ -484,13 +484,13 @@
           },
           "topLevel" : {
             "!type" : "bool",
-            "!doc" : "Defines whether this is a top level page."
+            "!doc" : "Defines whether this is a top level page. Default: \"false\"."
           }
         },
         "TextViewProperties": {
           "alignment" : {
             "!type" : "string",
-            "!doc" : "The horizontal alignment of the label text."
+            "!doc" : "The horizontal alignment of the text. Supported values: \"left\", \"right\", \"center\", default: \"left\"."
           },
           "markupEnabled": {
             "!type": "bool",
@@ -498,7 +498,7 @@
           },
           "maxLines": {
             "!type": "number",
-            "!doc": "Limit the number of lines to be displayed to the given maximum. \"null\" disables this limit."
+            "!doc": "Limit the number of lines to be displayed to the given maximum. \"null\" disables this limit. Default: \"null\"."
           },
           "text" : {
             "!type" : "string",
@@ -512,11 +512,11 @@
           },
           "autoCapitalize": {
             "!type": "bool",
-            "!doc": "Automatically switch to capital letters after every key pressed."
+            "!doc": "Automatically switch to capital letters after every key pressed. Default: \"false\"."
           },
           "autoCorrect": {
             "!type": "bool",
-            "!doc": "Enables the spell checker and auto-correction feature."
+            "!doc": "Enables the spell checker and auto-correction feature. Default: \"false\"."
           },
           "editable": {
             "!type": "bool",
@@ -542,7 +542,7 @@
         "CheckBoxProperties": {
           "selection" : {
             "!type" : "bool",
-            "!doc" : "The checked state of the check box."
+            "!doc" : "The checked state of the check box. Default: \"false\"."
           },
           "text" : {
             "!type" : "string",
@@ -564,15 +564,15 @@
           },
           "refreshEnabled" : {
             "!type" : "bool",
-            "!doc" : "Enables the user to trigger a refresh by using the pull-to-refresh gesture."
+            "!doc" : "Enables the user to trigger a refresh by using the pull-to-refresh gesture. Default: \"false\"."
           },
           "refreshIndicator" : {
             "!type" : "bool",
-            "!doc" : "Whether the refresh indicator is currently visible. Will be set to \"true\" when a \"refresh\" event is triggered. Reset it to \"false\" when the refresh is finished."
+            "!doc" : "Whether the refresh indicator is currently visible. Will be set to \"true\" when a \"refresh\" event is triggered. Reset it to \"false\" when the refresh is finished. Default: \"false\"."
           },
           "refreshMessage" : {
             "!type" : "string",
-            "!doc" : "The message text displayed together with the refresh indicator. Currently not supported on Android."
+            "!doc" : "The message text displayed together with the refresh indicator. Currently not supported on Android. Default: \"\"."
           }
         },
         "PickerProperties": {
@@ -620,7 +620,7 @@
         "RadioButtonProperties": {
           "selection" : {
             "!type" : "bool",
-            "!doc" : "The checked state of the radio button."
+            "!doc" : "The checked state of the radio button. Default: \"false\"."
           },
           "text" : {
             "!type" : "string",
@@ -631,14 +631,6 @@
           "proposals" : {
             "!type" : "[string]",
             "!doc" : "The list of proposals to display. Default: \"[]\"."
-          },
-          "minimum" : {
-            "!type" : "number",
-            "!doc" : "The minimal numeric value of the slider, default: \"0\""
-          },
-          "selection" : {
-            "!type" : "number",
-            "!doc" : "The current slider value. Default: \"0\""
           },
           "text" : {
             "!type" : "string",
@@ -691,28 +683,6 @@
             "!doc" : "Text title of the tab."
           },
         },
-        "TextProperties": {
-          "editable" : {
-            "!type" : "bool",
-            "!doc" : "Whether the Text widget is editable."
-          },
-          "message" : {
-            "!type" : "string",
-            "!doc" : "Displayed only when the field is empty."
-          },
-          "text" : {
-            "!type" : "string",
-            "!doc" : "Input text."
-          },
-          "textLimit" : {
-            "!type" : "number",
-            "!doc" : "Maximal number of characters allowed to be input in the text widget."
-          },
-          "textType" : {
-            "!type" : "string",
-            "!doc" : "The type of the text widget. Can only be set in the \"create\" method. Supported values: \"default\", \"password\", \"search\", \"multiline\", default: \"default\"."
-          }
-        },
         "ToggleButtonProperties": {
           "alignment" : {
             "!type" : "string",
@@ -724,7 +694,7 @@
           },
           "selection" : {
             "!type" : "bool",
-            "!doc" : "The selection state of the toggle button."
+            "!doc" : "The selection state of the toggle button. Default: \"false\"."
           },
           "text" : {
             "!type" : "string",
@@ -861,15 +831,15 @@
             "!doc": "Fired when a text input has been submitted by pressing the keyboard's search key. The current query text will be given as the second parameter."
           },
           "input": {
-            "!doc": "Fired when the search text has changed. The current query text will be given as the second parameter."
+            "!doc": "Fired when the user inputs text. The current query text will be given as the second parameter."
           }
         },
         "SliderEvents": {
           "change:selection": {
-            "!doc": "Fired when the selection of the slider gets changed."
+            "!doc": "Fired when the selection property changes."
           },
           "select": {
-            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the selection property is changed by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "TabFolderEvents": {
@@ -878,20 +848,6 @@
           },
           "select": {
             "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
-          }
-        },
-        "TextEvents": {
-          "accept": {
-            "!doc": "Fired when a text input has been finished by pressing the keyboard's Enter key. The label of this key may vary depending on the platform and locale."
-          },
-          "blur": {
-            "!doc": "Fired when the widget lost focus."
-          },
-          "change:text": {
-            "!doc": "Fired when the text property changes."
-          },
-          "focus": {
-            "!doc": "Fired when the widget gains focus."
           }
         },
         "TextInputEvents": {
@@ -913,10 +869,10 @@
         },
         "ToggleButtonEvents": {
           "change:selection": {
-            "!doc": "Fired when the toggle button is selected or deselected."
+            "!doc": "Fired when the selection property changes."
           },
           "select": {
-            "!doc": "Fired when the toggle button is selected or deselected. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the toggle button is selected or deselected by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "PageEvents": {
@@ -938,7 +894,7 @@
             "!doc": "Fired when the selection property changes. The index of the selected item is given in the options object as \"index\"."
           },
           "select": {
-            "!doc": "Fired an item was selected by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when an item was selected by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
         "ScrollViewEvents": {
