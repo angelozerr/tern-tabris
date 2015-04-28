@@ -55,6 +55,11 @@ module.exports = {
       "name" : "height",
       "type" : "number",
       "origin" : "tabris"
+    },
+    Tab: {
+      "name" : "animate",
+      "type" : "fn(animationProperties: ?, options: ?)",
+      "origin" : "tabris"
     }
   }
 };

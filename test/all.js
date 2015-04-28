@@ -16,6 +16,7 @@ exports['test tabris SearchAction'] = require('./test_SearchAction');
 exports['test tabris ScrollView'] = require('./test_ScrollView');
 exports['test tabris Slider'] = require('./test_Slider');
 exports['test tabris Tab'] = require('./test_Tab');
+exports['test tabris TabFolder'] = require('./test_TabFolder');
 exports['test tabris TextView'] = require('./test_TextView');
 exports['test tabris TextInput'] = require('./test_TextInput');
 exports['test tabris ToggleButton'] = require('./test_ToggleButton');

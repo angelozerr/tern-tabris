@@ -669,7 +669,7 @@
             "!doc" : "Enables swiping through tabs."
           },
           "selection" : {
-            "!type" : "types.Tab",
+            "!type" : "+types.Tab",
             "!doc" : "The selected tab object."
           },
           "tabBarLocation" : {
@@ -872,6 +872,14 @@
             "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
           }
         },
+        "TabFolderEvents": {
+          "change:selection": {
+            "!doc": "Fired when the selection of the slider gets changed."
+          },
+          "select": {
+            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in `change:selection`, i.e. `widget`, `selection`, `options`."
+          }
+        },
         "TextEvents": {
           "accept": {
             "!doc": "Fired when a text input has been finished by pressing the keyboard's Enter key. The label of this key may vary depending on the platform and locale."
@@ -943,7 +951,7 @@
         "Action" : {
           "!type" : "fn()",
           "!url" : "https://tabrisjs.com/documentation/widget-types#action",
-          "!doc" : "An executable item that is integrated in the application's navigation menu. Add a listener on `selection` to implement the action.",
+          "!doc" : "An executable item that is integrated in the application's navigation menu. Add a listener on \"select\" to implement the action.",
           "prototype" : {
             "get" : {
               "!type" : "fn(name: string) -> !custom:tabris_Proxy_get",
@@ -1014,7 +1022,7 @@
             "on" : {
               "!type" : "fn(type: string, listener: fn()) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
-              "!doc" : "Binds a listener function to the widget. The listener will be invoked whenever an event of the given event type is fired.",
+              "!doc" : "Adds the listener to the list of functions to be notified when event is fired. In the listener function, \"this\" will point to the widget itself.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
               "!data": {
                 "!lint": "tabrisEvent_lint"
@@ -1198,7 +1206,7 @@
         "SearchAction" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/widget-types#searchaction",
-          "!doc" : "An action that displays a search text field with dynamic proposals when selected. Add a listener on `selection` to implement the action. On `modify`, you may set a list of `proposals`.",
+          "!doc" : "An action that displays a search text field with dynamic proposals when selected. Add a listener on \"select\" to implement the action. On \"input\", you may set a list of \"proposals\".",
           "prototype" : {
             "!proto" : "types.Action.prototype"
           }
