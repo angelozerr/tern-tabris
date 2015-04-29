@@ -305,7 +305,7 @@
         "!type" : "fn(type: string, listener: fn()) -> !this",
         "!effects" : [ "custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_eventtype", "call !1 this=!this" ],
         "!doc" : "Adds a listener to the list of functions to be notified when event is fired. Supports chaining.",
-        "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
+        "!url" : "https://tabrisjs.com/documentation/1.0/api/Events#onevent-listener-context",
         "!data": {
           "!lint": "tabrisEvent_lint"
         }
@@ -314,7 +314,7 @@
         "!type" : "fn(type: string, listener: fn(), context?: ?) -> !this",
         "!effects" : [ "custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_eventtype", "call !1 this=!this" ],
         "!doc" : "Same as on, but removes the listener after it has been invoked by an event. Supports chaining.",
-        "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
+        "!url" : "https://tabrisjs.com/documentation/1.0/api/Events#onceevent-listener-context",
         "!data": {
           "!lint": "tabrisEvent_lint"
         }
@@ -323,7 +323,7 @@
         "!type" : "fn(event?: string, listener?: fn(), context?: ?) -> !this",
         "!effects" : [ "custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_eventtype", "call !1 this=!this" ],
         "!doc" : "Removes all occurrences of listener that are bound to event and context from this widget. Supports chaining.",
-        "!url" : "https://tabrisjs.com/documentation/widgets#codeofftype-listener-contextcode",
+        "!url" : "https://tabrisjs.com/documentation/1.0/api/Events#offevent-listener-context",
         "!data": {
           "!lint": "tabrisEvent_lint"
         }
@@ -336,7 +336,7 @@
       "get" : {
         "!type" : "fn(name: string) -> !custom:tabris" + (type === "proxy" ? "_Proxy" : "") + "_get",
         "!doc" : "Gets the current value of the given property.",
-        "!url" : "https://tabrisjs.com/documentation/widgets#codegetnamecode",
+        "!url" : "https://tabrisjs.com/documentation/1.0/api/Properties#getproperty",
         "!data": {
           "!lint": "tabrisGet_lint"
         }
@@ -345,7 +345,7 @@
         "!type" : "fn(name: string, value: ?) -> !this",
         "!effects" : ["custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_set"],
         "!doc" : "Sets the given property. Supports chaining.",
-        "!url" : "https://tabrisjs.com/documentation/widgets#codesetname-valuecode",
+        "!url" : "https://tabrisjs.com/documentation/1.0/api/Properties#setproperty-value",
         "!data": {
           "!lint": "tabrisSet_lint"
         }
@@ -369,7 +369,7 @@
       "!propertyTypes": {
         "Bounds" : {
           "!doc": "Widget bounds are represented as an object with the following properties:",
-          "!url": "https://tabrisjs.com/documentation/property-types#bounds",
+          "!url": "https://tabrisjs.com/documentation/1.0/types#bounds",
           "left" : {
             "!type": "number",
             "!doc": "The horizontal offset from the parent's left edge in dip"
@@ -389,15 +389,15 @@
         },
         "Color": {
           "!doc": "Colors are specified as strings using one of the following formats:",
-          "!url": "https://tabrisjs.com/documentation/property-types#color"
+          "!url": "https://tabrisjs.com/documentation/1.0/types#color"
         },
         "Font": {
           "!doc": "Fonts are specified as strings using the shorthand syntax known from CSS. The font family may be omitted, in this case the default system font will be used.",
-          "!url": "https://tabrisjs.com/documentation/property-types#font"
+          "!url": "https://tabrisjs.com/documentation/1.0/types#font"
         },
         "Image": {
           "!doc": "Image object associated with the element.",
-          "!url": "https://tabrisjs.com/documentation/property-types#image",
+          "!url": "https://tabrisjs.com/documentation/1.0/types#image",
           "src": {
             "!type": "string",
             "!doc": "Image path or URL."
@@ -417,56 +417,47 @@
         },
         "LayoutData": {
           "!doc": "Used to define how a widget should be arranged within its parent.",
-          "!url": "https://tabrisjs.com/documentation/property-types#layoutdata",
+          "!url": "https://tabrisjs.com/documentation/1.0/types#layoutdata",
           "left" : {
             "!type": "number",
-            "!doc": "Defines the position of the widget's left edge.",
-            "!url": "https://tabrisjs.com/documentation/layout#left"
+            "!doc": "Defines the position of the widget's left edge."
           },
           "right" : {
             "!type": "number",
-            "!doc": "Defines the position of the widget's right edge.",
-            "!url": "https://tabrisjs.com/documentation/layout#right"
+            "!doc": "Defines the position of the widget's right edge."
           },
           "top" : {
             "!type": "number",
-            "!doc": "Defines the position of the widget's upper edge.",
-            "!url": "https://tabrisjs.com/documentation/layout#top"
+            "!doc": "Defines the position of the widget's upper edge."
           },
           "bottom" : {
             "!type": "number",
-            "!doc": "Defines the position of the widget's lower edge.",
-            "!url": "https://tabrisjs.com/documentation/layout#bottom"
+            "!doc": "Defines the position of the widget's lower edge."
           },
           "centerX" : {
             "!type": "number",
-            "!doc": "Defines the horizontal position of the widget relative to the parent's center.",
-            "!url": "https://tabrisjs.com/documentation/layout#centerx"
+            "!doc": "Defines the horizontal position of the widget relative to the parent's center."
           },
           "centerY" : {
             "!type": "number",
-            "!doc": "Defines the vertical position of the widget relative to the parent's center.",
-            "!url": "https://tabrisjs.com/documentation/layout#centery"
+            "!doc": "Defines the vertical position of the widget relative to the parent's center."
           },
           "baseline" : {
             "!type": "+types.Widget",
-            "!doc": "Defines the vertical position of the widget relative to another widget's text baseline.",
-            "!url": "https://tabrisjs.com/documentation/layout#baseline"
+            "!doc": "Defines the vertical position of the widget relative to another widget's text baseline."
           },
           "width" : {
             "!type": "number",
-            "!doc": "Defines the width of the widget.",
-            "!url": "https://tabrisjs.com/documentation/layout#width"
+            "!doc": "Defines the width of the widget."
           },
           "height" : {
             "!type": "number",
-            "!doc": "Defines the height of the widget.",
-            "!url": "https://tabrisjs.com/documentation/layout#height"
+            "!doc": "Defines the height of the widget."
           }
         },
         "Transformation": {
           "!doc": "Transformations are specified as an object with the following properties:",
-          "!url": "https://tabrisjs.com/documentation/property-types#transformation",
+          "!url": "https://tabrisjs.com/documentation/1.0/types#transformation",
           "rotation": {
             "!type": "number",
             "!doc": "Clock-wise rotation in radians."
@@ -1075,7 +1066,7 @@
       "types": {
         "Action" : {
           "!type" : "fn()",
-          "!url" : "https://tabrisjs.com/documentation/widget-types#action",
+          "!url" : "https://tabrisjs.com/documentation/1.0/api/Action",
           "!doc" : "An executable item that is integrated in the application's navigation menu. Add a listener on \"select\" to implement the action.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1098,54 +1089,46 @@
             },
             "animate" : {
               "!type" : "fn(animationProperties: ?, options: ?)",
-              "!doc" : "Changes a number of widget properties with an animation. Currently, only the properties transform and opacity are supported. Does not yet return any value.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeanimateproperties-optionscode"
+              "!doc" : "Changes a number of widget properties with an animation. Currently, only the properties transform and opacity are supported. Does not yet return any value."
             },
             "appendTo" : {
               "!type" : "fn(parent: +types.Widget) -> !this",
-              "!doc" : "Appends the widget to a parent. If the widget already has a parent, it is de-registered from the actual parent and registered with the new one. Triggers an add event on the parent. Returns the widget itself.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeappendtoparentcode"
+              "!doc" : "Appends the widget to a parent. If the widget already has a parent, it is de-registered from the actual parent and registered with the new one. Triggers an add event on the parent. Returns the widget itself."
             },
             "parent" : {
               "!type" : "fn() -> +types.Widget",
-              "!doc" : "Returns the widget's parent.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeparentcode"
+              "!doc" : "Returns the widget's parent."
             },
             "children" : {
               "!type" : "fn(selector?: string) -> +types.WidgetCollection",
-              "!doc" : "Returns the list of children of this widget as a WidgetCollection.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codechildrencode"
+              "!doc" : "Returns the list of children of this widget as a WidgetCollection."
             },
             "trigger" : {
               "!type" : "fn(type?: string, param?: ?) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype"],
               "!doc" : "Programmatically invokes all listeners for the given event type with a given set of parameters. Returns the widget itself.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codetriggertype-param-code",
               "!data": {
                 "!lint": "tabrisEvent_lint"
               }
             },
             "dispose" : {
               "!type" : "fn()",
-              "!doc" : "Disposes of the widget and all of its children. Triggers a remove event on the parent and a dispose event on itself.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codedisposecode"
+              "!doc" : "Disposes of the widget and all of its children. Triggers a remove event on the parent and a dispose event on itself."
             },
             "isDisposed" : {
               "!type" : "fn() -> bool",
-              "!doc" : "Returns \"true\" if the widget has been disposed, otherwise \"false\".",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeisdisposedcode"
+              "!doc" : "Returns \"true\" if the widget has been disposed, otherwise \"false\"."
             },
             "find" : {
               "!type" : "fn(selector?: string) -> +types.WidgetCollection",
-              "!doc" : "Like children, but returns the list of all descendants of this widget as a WidgetCollection.",
-              "!url" : "https://tabrisjs.com/documentation/selector#widgetlike-api"
+              "!doc" : "Like children, but returns the list of all descendants of this widget as a WidgetCollection."
             }
           })
         },
         "WidgetCollection": {
           "!type" : "fn()",
           "!doc" : "A \"WidgetCollection\" is an array-like object representing a set of widgets, as returned by the widget methods \"children\" and \"find\".",
-          "!url": "https://tabrisjs.com/documentation/selector#widgetcollection",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/WidgetCollection",
           "prototype" : {
             "first" : {
               "!type" : "fn()",
@@ -1189,7 +1172,7 @@
         },
         "Page" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#page",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Page",
           "!doc" : "Pages contain an application's UI.",
           "prototype" : {
             "!proto" : "types.Composite.prototype",
@@ -1205,7 +1188,7 @@
         },
         "Button" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#button",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Button",
           "!doc" : "A push button. Can contain a text or an image.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1213,7 +1196,7 @@
         },
         "TextView" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#textview",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/TextView",
           "!doc" : "A widget to display a text. For images, use ImageView.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1221,7 +1204,7 @@
         },
         "TextInput" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#textinput",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/TextInput",
           "!doc" : "A widget that allows to enter text.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1229,7 +1212,7 @@
         },
         "CheckBox" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#checkbox",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/CheckBox",
           "!doc" : "A check box widget.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1237,7 +1220,7 @@
         },
         "CollectionView" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#collectionview",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/CollectionView",
           "!doc" : "A scrollable list that displays data items in cells, one per row. Cells are created on demand and filled with widgets in the \"initializeCell\" callback. When a data item is mapped to a cell, it is set as the property \"item\" and the cell receives an \"change:item\" event.",
           "prototype" : {
             "!proto" : "types.Widget.prototype",
@@ -1261,7 +1244,7 @@
         },
         "Picker" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#picker",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Picker",
           "!doc" : "A widget with a drop-down list of items to choose from.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1269,7 +1252,7 @@
         },
         "PageSelector" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#pageselector",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/PageSelector",
           "!doc" : "A CollectionView that contains all top-level pages and allows to open them. New top-level pages are added dynamically.",
           "prototype" : {
             "!proto" : "types.CollectionView.prototype"
@@ -1277,7 +1260,7 @@
         },
         "SearchAction" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#searchaction",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/SearchAction",
           "!doc" : "An action that displays a search text field with dynamic proposals when selected. Add a listener on \"select\" to implement the action. On \"input\", you may set a list of \"proposals\".",
           "prototype" : {
             "!proto" : "types.Action.prototype"
@@ -1285,7 +1268,7 @@
         },
         "Composite" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#composite",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Composite",
           "!doc" : "An empty widget that can contain other widgets.",
           "prototype" : {
             "!proto" : "types.Widget.prototype",
@@ -1297,7 +1280,7 @@
         },
         "Canvas" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#canvas",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Canvas",
           "!doc" : "An empty widget to draw graphics on. Can also contain other widgets.",
           "prototype" : {
             "!proto" : "types.Composite.prototype",
@@ -1309,7 +1292,7 @@
         },
         "CanvasContext": {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#canvas",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Canvas",
           "prototype": {
             "save": "fn()",
             "restore": "fn()",
@@ -1345,7 +1328,7 @@
         },
         "Drawer" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#drawer",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Drawer",
           "!doc" : "A navigation drawer that can be swiped in from the left edge of the screen. Can contain any kind of widgets. It may be useful to include a \"PageSelector\" that displays all top-level pages.",
           "prototype" : {
             "!proto" : "types.Composite.prototype",
@@ -1361,7 +1344,7 @@
         },
         "ImageView" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#imageview",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/ImageView",
           "!doc" : "A widget to display an image.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1369,7 +1352,7 @@
         },
         "ProgressBar" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#progressbar",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/ProgressBar",
           "!doc" : "A widget representing a numeric value as a horizontal bar with a growing indicator.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1377,7 +1360,7 @@
         },
         "RadioButton" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#radiobutton",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/RadioButton",
           "!doc" : "A radio button. Selecting a radio button deselects all its siblings (i.e. all radio buttons within the same parent).",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1385,7 +1368,7 @@
         },
         "Slider" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#slider",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Slider",
           "!doc" : "A widget representing a numeric value as an movable indicator on a horizontal line. Known Issues: Selection event is only fired after indicator is released.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1393,7 +1376,7 @@
         },
         "TabFolder" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#tabfolder",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/TabFolder",
           "!doc" : "A widget that can switch between tabs.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1401,23 +1384,15 @@
         },
         "Tab" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#tab",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Tab",
           "!doc" : "A container representing a single tab of the TabFolder widget.",
           "prototype" : {
             "!proto" : "types.Composite.prototype"
           }
         },
-        "Text" : {
-          "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#text",
-          "!doc" : "A widget that allows to enter text. Known Issues: The cursor jumps to the beginning of the text in iOS.",
-          "prototype" : {
-            "!proto" : "types.Widget.prototype"
-          }
-        },
         "ToggleButton" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#togglebutton",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/ToggleButton",
           "!doc" : "A push button that \"snaps in\", i.e. it is selected when pressed and deselected when pressed again.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1425,7 +1400,7 @@
         },
         "ScrollView" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#scrollview",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/ScrollView",
           "!doc" : "A composite that allows its content to overflow either vertically (default) or horizontally. Children of a ScrollView may not be attached to its edge in scrolling direction (to the bottom for vertical scrolling, to the right for horizontal scrolling).",
           "prototype" : {
             "!proto" : "types.Composite.prototype"
@@ -1433,7 +1408,7 @@
         },
         "Video" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#video",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/Video",
           "!doc" : "A widget that plays a video from a URL.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1441,7 +1416,7 @@
         },
         "WebView" : {
           "!type" : "fn()",
-          "!url": "https://tabrisjs.com/documentation/widget-types#webview",
+          "!url": "https://tabrisjs.com/documentation/1.0/api/WebView",
           "!doc" : "A widget that can display a web page. Known Issues: Having multiple instances of this widget on screen may not work.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
@@ -1453,7 +1428,7 @@
       "create" : {
         "!type" : "fn(type: string, properties?: ?) -> !custom:tabris_create",
         "!doc" : "Creates a native widget of a given type and returns its reference.",
-        "!url" : "https://tabrisjs.com/documentation/widgets#codetabriscreatetype-propertiescode",
+        "!url" : "https://tabrisjs.com/documentation/1.0/widget-basics#tabriscreatetype-properties",
         "!data": {
           "!lint": "tabrisCreate_lint"
         }
