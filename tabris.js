@@ -14,7 +14,7 @@
     "UnknownTabrisEvent" : {"severity" : "error"}
   };
 
-  var notCreatable = ["Widget", "WidgetCollection", "CanvasContext"];
+  var notCreatable = ["Widget", "WidgetCollection", "CanvasContext", "TabrisUI"];
 
   function registerLints() {
     if (!tern.registerLint) return;
@@ -68,6 +68,11 @@
     return infer.ANull;
   });
 
+  function getUIProperties() {
+    var cx = infer.cx();
+    var locals = cx.definitions.tabris;
+    return locals["!properties"].hasProp("TabrisUIProperties");
+  }
   // widget.get(
 
   function getObjectProperties(proto) {
@@ -76,6 +81,18 @@
     if (index == 0) objectName = objectName.substring("types.".length, objectName.length);
     objectName = objectName.substring(0, objectName.indexOf('.')) + 'Properties';
     return locals["!properties"].hasProp(objectName);
+  }
+
+  function getUIPropertyType(widgetType, propertyName) {
+    if (!(widgetType)) return null;
+    var proto = widgetType.proto, propertyType = null;
+    while(proto) {
+      var objectType = getUIProperties(proto);
+      if (objectType && objectType.getType) propertyType = objectType.getType().hasProp(propertyName)
+      if (propertyType) return propertyType;
+      proto = proto.proto;
+    }
+    return null;
   }
 
   function getPropertyType(widgetType, propertyName) {
@@ -89,6 +106,32 @@
     }
     return null;
   }
+
+  infer.registerFunction("tabris_UI_eventtype", function(_self, args, argNodes) {
+    if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
+      return infer.ANull;
+
+    argNodes[0]._tabris = {"type" : "tabris_UI_eventtype", "proxyType" : _self.getType()};
+  });
+
+  infer.registerFunction("tabris_UI_set", function(_self, args, argNodes) {
+    if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
+      return infer.ANull;
+
+    argNodes[0]._tabris = {"type" : "tabris_UI_set", "proxyType" : _self.getType()};
+  });
+
+  infer.registerFunction("tabris_UI_get", function(_self, args, argNodes) {
+    if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
+      return infer.ANull;
+
+    var widgetType = _self.getType();
+    var propertyName = argNodes[0].value;
+    var propertyType = getUIPropertyType(widgetType, propertyName);
+    argNodes[0]._tabris = {"type" : "tabris_UI_get", "proxyType" : widgetType};
+    if (propertyType) return propertyType.getType();
+      return infer.ANull;
+  });
 
   // widget.get
   infer.registerFunction("tabris_Proxy_get", function(_self, args, argNodes) {
@@ -116,6 +159,12 @@
     }
     return _self;*/
   });
+
+  function getUIEventProperties(proto) {
+    var cx = infer.cx();
+    var locals = cx.definitions.tabris;
+    return locals["!events"].hasProp("TabrisUIEvents");
+  }
 
   // widget.on(
   function getEventProperties(proto) {
@@ -228,6 +277,17 @@
             types.props = omit(types.props, notCreatable);
             overrideType = "string";
             infer.forAllPropertiesOf(types, gather);
+            break;
+          case "tabris_UI_eventtype":
+            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
+            var objType = getUIEventProperties(proto);
+            if (objType) infer.forAllPropertiesOf(objType, gather);
+            break;
+          case "tabris_UI_get":
+          case "tabris_UI_set":
+            var widgetType = nodeArg._tabris.proxyType, props = widgetType.props, propertyType = null;
+            var objType = getUIProperties(props);
+            if (objType) infer.forAllPropertiesOf(objType, gather);
             break;
         }
 
@@ -383,6 +443,16 @@
         }
       },
       "!properties" : {
+        "TabrisUIProperties" : {
+          "background" : {
+            "!type" : "!propertyTypes.Color",
+            "!doc" : "Background color for the navigation elements"
+          },
+          "activePage" : {
+            "!type" : "+types.Page",
+            "!doc" : "The currently visible page."
+          },
+        },
         "ActionProperties" : {
           "enabled": {
             "!type": "bool",
@@ -725,6 +795,11 @@
         }
       },
       "!events": {
+        "TabrisUIEvents": {
+          "change:activePage": {
+            "!doc": "Fired when the \"activePage\" property of tabris.ui changes."
+          }
+        },
         "ActionEvents": {
           "select": {
             "!doc": "Fired when the action is invoked. Gives the action as the first parameter."
@@ -1354,6 +1429,24 @@
         "!url" : "https://tabrisjs.com/documentation/widgets#codetabriscreatetype-propertiescode",
         "!data": {
           "!lint": "tabrisCreate_lint"
+        }
+      },
+      "ui": {
+        "!doc": "The object \"tabris.ui\" is the root element for all widgets. This is the parent for all top-level pages, actions and the drawer.",
+        "set": {
+          "!type": "fn(name: string, value: ?) -> !this",
+          "!effects": ["custom tabris_UI_set"],
+          "!doc": "Sets a tabris.ui property. Returns the tabris.ui object."
+        },
+        "get": {
+          "!type": "fn(name: string) -> !custom:tabris_UI_get",
+          "!doc": "Gets the current value of the given tabris.ui property."
+        },
+        "on": {
+          "!type": "fn(type: string, listener: fn()) -> !this",
+          "!effects": ["custom tabris_UI_eventtype", "call !1 this=!this"],
+          "!doc": "Adds the listener to the list of functions to be notified when event is fired. In the listener function, \"this\" will point to tabris.ui itself.",
+          "!url": "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode"
         }
       }
     }
