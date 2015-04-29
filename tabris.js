@@ -14,7 +14,7 @@
     "UnknownTabrisEvent" : {"severity" : "error"}
   };
 
-  var notCreatable = ["Widget", "WidgetCollection", "CanvasContext", "TabrisUI"];
+  var notCreatable = ["Widget", "WidgetCollection", "CanvasContext"];
 
   function registerLints() {
     if (!tern.registerLint) return;
@@ -33,7 +33,7 @@
       var argNode = node.arguments[0];
       if (argNode) {
         var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, propertyName = argNode.value;
-        if (!getPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
+        if (!getProxyPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
       }
     });
 
@@ -42,7 +42,7 @@
       var argNode = node.arguments[0];
       if (argNode) {
         var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, propertyName = argNode.value;
-        if (!getPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
+        if (!getProxyPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
       }
     });
 
@@ -57,8 +57,6 @@
 
   }
 
-  // tabris.create(
-
   infer.registerFunction("tabris_create", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
@@ -68,124 +66,48 @@
     return infer.ANull;
   });
 
-  function getUIProperties() {
-    var cx = infer.cx();
-    var locals = cx.definitions.tabris;
-    return locals["!properties"].hasProp("TabrisUIProperties");
-  }
-  // widget.get(
-
-  function getObjectProperties(proto) {
-    var cx = infer.cx(), locals = cx.definitions.tabris;
-    var objectName = proto.name, index = objectName.indexOf("types.");
-    if (index == 0) objectName = objectName.substring("types.".length, objectName.length);
-    objectName = objectName.substring(0, objectName.indexOf('.')) + 'Properties';
-    return locals["!properties"].hasProp(objectName);
-  }
-
-  function getUIPropertyType(widgetType, propertyName) {
-    if (!(widgetType)) return null;
-    var proto = widgetType.proto, propertyType = null;
-    while(proto) {
-      var objectType = getUIProperties(proto);
-      if (objectType && objectType.getType) propertyType = objectType.getType().hasProp(propertyName)
-      if (propertyType) return propertyType;
-      proto = proto.proto;
-    }
-    return null;
-  }
-
-  function getPropertyType(widgetType, propertyName) {
-    if (!(widgetType)) return null;
-    var proto = widgetType.proto, propertyType = null;
-    while(proto) {
-      var objectType = getObjectProperties(proto);
-      if (objectType && objectType.getType) propertyType = objectType.getType().hasProp(propertyName)
-      if (propertyType) return propertyType;
-      proto = proto.proto;
-    }
-    return null;
-  }
-
-  infer.registerFunction("tabris_UI_eventtype", function(_self, args, argNodes) {
+  infer.registerFunction("tabris_eventtype", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
 
-    argNodes[0]._tabris = {"type" : "tabris_UI_eventtype", "proxyType" : _self.getType()};
+    argNodes[0]._tabris = {"type" : "tabris_eventtype", "proxyType" : _self.getType()};
   });
 
-  infer.registerFunction("tabris_UI_set", function(_self, args, argNodes) {
+  infer.registerFunction("tabris_set", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
 
-    argNodes[0]._tabris = {"type" : "tabris_UI_set", "proxyType" : _self.getType()};
+    argNodes[0]._tabris = {"type" : "tabris_set", "proxyType" : _self.getType()};
   });
 
-  infer.registerFunction("tabris_UI_get", function(_self, args, argNodes) {
+  infer.registerFunction("tabris_get", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
-
     var widgetType = _self.getType();
     var propertyName = argNodes[0].value;
-    var propertyType = getUIPropertyType(widgetType, propertyName);
-    argNodes[0]._tabris = {"type" : "tabris_UI_get", "proxyType" : widgetType};
+    var propertyType = getPropertyType(widgetType, propertyName);
+    argNodes[0]._tabris = {"type" : "tabris_get", "proxyType" : widgetType};
     if (propertyType) return propertyType.getType();
       return infer.ANull;
   });
 
-  // widget.get
   infer.registerFunction("tabris_Proxy_get", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
 
-    var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getPropertyType(widgetType, propertyName);
+    var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getProxyPropertyType(widgetType, propertyName);
     argNodes[0]._tabris = {"type" : "tabris_Proxy_get", "proxyType" : widgetType};
     if (propertyType) return propertyType.getType();
       return infer.ANull;
   });
 
-  // widget.set
   infer.registerFunction("tabris_Proxy_set", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
       return infer.ANull;
 
-    var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getPropertyType(widgetType, propertyName);
+    var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getProxyPropertyType(widgetType, propertyName);
     argNodes[0]._tabris = {"type" : "tabris_Proxy_set", "proxyType" : widgetType};
-
-   /* if (args[1] && propertyType && propertyType.getType()) {
-      var fn = _self.hasProp("set").getFunctionType();
-      var newArgs = [args[0], propertyType.getType()];
-      fn.propagate(new infer.IsCallee(infer.cx().topScope, newArgs, argNodes, infer.Null))
-    }
-    return _self;*/
   });
-
-  function getUIEventProperties(proto) {
-    var cx = infer.cx();
-    var locals = cx.definitions.tabris;
-    return locals["!events"].hasProp("TabrisUIEvents");
-  }
-
-  // widget.on(
-  function getEventProperties(proto) {
-    var cx = infer.cx(), locals = cx.definitions.tabris;
-    var objectName = proto.name, index = objectName.indexOf("types.");
-    if (index == 0) objectName = objectName.substring("types.".length, objectName.length);
-    objectName = objectName.substring(0, objectName.indexOf('.')) + 'Events';
-    return locals["!events"].hasProp(objectName);
-  }
-
-  function getEventType(widgetType, eventName) {
-    if (!(widgetType)) return null;
-    var proto = widgetType.proto, eventType = null;
-    while(proto) {
-      var objectType = getEventProperties(proto);
-      if (objectType && objectType.getType) eventType = objectType.getType().hasProp(eventName)
-      if (eventType) return eventType;
-      proto = proto.proto;
-    }
-    return null;
-  }
 
   infer.registerFunction("tabris_Proxy_eventtype", function(_self, args, argNodes) {
     if (!argNodes || !argNodes.length || argNodes[0].type != "Literal" || typeof argNodes[0].value != "string")
@@ -194,6 +116,67 @@
     var proxyType = _self.getType();
     argNodes[0]._tabris = {"type" : "tabris_Proxy_eventtype", "proxyType" : proxyType};
   });
+
+  function getProperties(widgetType) {
+    var cx = infer.cx();
+    var locals = cx.definitions.tabris;
+    return locals["!properties"].hasProp(widgetType.name + "Properties");
+  }
+
+  function getEventProperties(widgetType) {
+    var cx = infer.cx();
+    var locals = cx.definitions.tabris;
+    return locals["!events"].hasProp(widgetType.name + "Events");
+  }
+
+  function getEventType(widgetType, eventName) {
+    if (!(widgetType)) return null;
+    var proto = widgetType.proto, eventType = null;
+    while(proto) {
+      var objectType = getProxyEventProperties(proto);
+      if (objectType && objectType.getType) eventType = objectType.getType().hasProp(eventName)
+      if (eventType) return eventType;
+      proto = proto.proto;
+    }
+    return null;
+  }
+
+  function getPropertyType(widgetType, propertyName) {
+    if (!(widgetType)) return null;
+    var proto = widgetType.proto, propertyType = null;
+    var objectType = getProperties(widgetType);
+    if (objectType && objectType.getType) propertyType = objectType.getType().hasProp(propertyName)
+    if (propertyType) return propertyType;
+    return null;
+  }
+
+  function getProxyPropertyType(widgetType, propertyName) {
+    if (!(widgetType)) return null;
+    var proto = widgetType.proto, propertyType = null;
+    while(proto) {
+      var objectType = getProxyObjectProperties(proto);
+      if (objectType && objectType.getType) propertyType = objectType.getType().hasProp(propertyName)
+      if (propertyType) return propertyType;
+      proto = proto.proto;
+    }
+    return null;
+  }
+
+  function getProxyObjectProperties(proto) {
+    var cx = infer.cx(), locals = cx.definitions.tabris;
+    var objectName = proto.name, index = objectName.indexOf("types.");
+    if (index == 0) objectName = objectName.substring("types.".length, objectName.length);
+    objectName = objectName.substring(0, objectName.indexOf('.')) + 'Properties';
+    return locals["!properties"].hasProp(objectName);
+  }
+
+  function getProxyEventProperties(proto) {
+    var cx = infer.cx(), locals = cx.definitions.tabris;
+    var objectName = proto.name, index = objectName.indexOf("types.");
+    if (index == 0) objectName = objectName.substring("types.".length, objectName.length);
+    objectName = objectName.substring(0, objectName.indexOf('.')) + 'Events';
+    return locals["!events"].hasProp(objectName);
+  }
 
   tern.registerPlugin("tabris", function(server, options) {
 	registerLints();
@@ -259,7 +242,7 @@
           case "tabris_Proxy_set":
             var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
             while(proto) {
-              var objType = getObjectProperties(proto);
+              var objType = getProxyObjectProperties(proto);
               if (objType) infer.forAllPropertiesOf(objType, gather);
               proto = proto.proto;
             }
@@ -267,7 +250,7 @@
           case "tabris_Proxy_eventtype":
             var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
             while(proto) {
-              var objType = getEventProperties(proto);
+              var objType = getProxyEventProperties(proto);
               if (objType) infer.forAllPropertiesOf(objType, gather);
               proto = proto.proto;
             }
@@ -278,15 +261,15 @@
             overrideType = "string";
             infer.forAllPropertiesOf(types, gather);
             break;
-          case "tabris_UI_eventtype":
+          case "tabris_eventtype":
             var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
-            var objType = getUIEventProperties(proto);
+            var objType = getEventProperties(widgetType);
             if (objType) infer.forAllPropertiesOf(objType, gather);
             break;
-          case "tabris_UI_get":
-          case "tabris_UI_set":
+          case "tabris_get":
+          case "tabris_set":
             var widgetType = nodeArg._tabris.proxyType, props = widgetType.props, propertyType = null;
-            var objType = getUIProperties(props);
+            var objType = getProperties(widgetType);
             if (objType) infer.forAllPropertiesOf(objType, gather);
             break;
         }
@@ -315,6 +298,70 @@
   function maybeSet(obj, prop, val) {
     if (val != null) obj[prop] = val;
   }
+
+  function getEventsAPI(type) {
+    return {
+      "on": {
+        "!type" : "fn(type: string, listener: fn()) -> !this",
+        "!effects" : [ "custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_eventtype", "call !1 this=!this" ],
+        "!doc" : "Adds a listener to the list of functions to be notified when event is fired. Supports chaining.",
+        "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
+        "!data": {
+          "!lint": "tabrisEvent_lint"
+        }
+      },
+      "once": {
+        "!type" : "fn(type: string, listener: fn(), context?: ?) -> !this",
+        "!effects" : [ "custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_eventtype", "call !1 this=!this" ],
+        "!doc" : "Same as on, but removes the listener after it has been invoked by an event. Supports chaining.",
+        "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
+        "!data": {
+          "!lint": "tabrisEvent_lint"
+        }
+      },
+      "off": {
+        "!type" : "fn(event?: string, listener?: fn(), context?: ?) -> !this",
+        "!effects" : [ "custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_eventtype", "call !1 this=!this" ],
+        "!doc" : "Removes all occurrences of listener that are bound to event and context from this widget. Supports chaining.",
+        "!url" : "https://tabrisjs.com/documentation/widgets#codeofftype-listener-contextcode",
+        "!data": {
+          "!lint": "tabrisEvent_lint"
+        }
+      }
+    }
+  }
+
+  function getPropertiesAPI(type) {
+    return {
+      "get" : {
+        "!type" : "fn(name: string) -> !custom:tabris" + (type === "proxy" ? "_Proxy" : "") + "_get",
+        "!doc" : "Gets the current value of the given property.",
+        "!url" : "https://tabrisjs.com/documentation/widgets#codegetnamecode",
+        "!data": {
+          "!lint": "tabrisGet_lint"
+        }
+      },
+      "set" : {
+        "!type" : "fn(name: string, value: ?) -> !this",
+        "!effects" : ["custom tabris" + (type === "proxy" ? "_Proxy" : "") + "_set"],
+        "!doc" : "Sets the given property. Supports chaining.",
+        "!url" : "https://tabrisjs.com/documentation/widgets#codesetname-valuecode",
+        "!data": {
+          "!lint": "tabrisSet_lint"
+        }
+      }
+    }
+  }
+
+  var eventsAPI = {
+    tabris: getEventsAPI("tabris"),
+    proxy: getEventsAPI("proxy")
+  };
+
+  var propertiesAPI = {
+    tabris: getPropertiesAPI("tabris"),
+    proxy: getPropertiesAPI("proxy")
+  };
 
   var defs = {
     "!name" : "tabris",
@@ -443,7 +490,7 @@
         }
       },
       "!properties" : {
-        "TabrisUIProperties" : {
+        "tabris.uiProperties" : {
           "background" : {
             "!type" : "!propertyTypes.Color",
             "!doc" : "Background color for the navigation elements"
@@ -452,6 +499,40 @@
             "!type" : "+types.Page",
             "!doc" : "The currently visible page."
           },
+        },
+        "tabris.deviceProperties" : {
+          "language" : {
+            "!type" : "string",
+            "!doc" : "The user language configured on the device as an RFC 4646 compliant string. For example \"de\", \"es-ES\", etc. This property is also available globally as navigator.language."
+          },
+          "model" : {
+            "!type" : "string",
+            "!doc" : "The name of the device model. For example \"iPad4,1\" or \"Nexus 7\". This property is also available globally as device.model."
+          },
+          "orientation" : {
+            "!type" : "string",
+            "!doc" : "The device orientation. One of \"portrait-primary\", \"portrait-secondary\", \"landscape-primary\", and \"landscape-secondary\"."
+          },
+          "platform" : {
+            "!type" : "string",
+            "!doc" : "The name of the platform. Currently either \"Android\" or \"iOS\". This property is also available globally as device.platform."
+          },
+          "scaleFactor" : {
+            "!type" : "number",
+            "!doc" : "The ratio between physical pixels and device independent pixels. This property is also available globally as \"window.devicePixelRatio\""
+          },
+          "screenHeight" : {
+            "!type" : "string",
+            "!doc" : "The entire height of the device's screen in device independent pixel. Depends on the current device orientation. This property is also available globally as screen.height."
+          },
+          "screenWidth" : {
+            "!type" : "string",
+            "!doc" : "The entire width of the device's screen in device independent pixel. Depends on the current device orientation. This property is also available as globally as screen.width."
+          },
+          "version" : {
+            "!type" : "string",
+            "!doc" : "The platform version. On iOS it lools like this: \"8.1.1\". On Android, the version code is returned. This property is also available globally as device.version."
+          }
         },
         "ActionProperties" : {
           "enabled": {
@@ -479,7 +560,7 @@
             "!doc": "Whether the action is visible."
           }
         },
-        "WidgetProperties" : {
+        "WidgetProperties" : extend({}, propertiesAPI.proxy, {
           "id": {
             "!type" : "string",
             "!doc" : "A string to identify the widget by using selectors. Id's are optional. It is strongly recommended that they are unique within a page."
@@ -528,7 +609,7 @@
             "!type" : "bool",
             "!doc" : "Whether the entire widget should be highlighted while touched. Default: \"false\"."
           }
-        },
+        }),
         "ButtonProperties" : {
           "alignment" : {
             "!type" : "string",
@@ -795,9 +876,22 @@
         }
       },
       "!events": {
-        "TabrisUIEvents": {
+        "tabris.appEvents": {
+          "pause": {
+            "!doc": "Fired before the application goes into hibernation."
+          },
+          "resume": {
+            "!doc": "Fired after the application returned from hibernation."
+          }
+        },
+        "tabris.uiEvents": {
           "change:activePage": {
             "!doc": "Fired when the \"activePage\" property of tabris.ui changes."
+          }
+        },
+        "tabris.deviceEvents": {
+          "change:orientation": {
+            "!doc": "Fired when the \"orientation\" property has changed and the rotation animation has finished."
           }
         },
         "ActionEvents": {
@@ -984,35 +1078,12 @@
           "!url" : "https://tabrisjs.com/documentation/widget-types#action",
           "!doc" : "An executable item that is integrated in the application's navigation menu. Add a listener on \"select\" to implement the action.",
           "prototype" : {
-            "get" : {
-              "!type" : "fn(name: string) -> !custom:tabris_Proxy_get",
-              "!doc" : "Retrieves the current value of the given property from the action and returns it.",
-              "!data": {
-                "!lint": "tabrisGet_lint"
-              }
-            },
-            "set" : {
-              "!type" : "fn(name: string, value: ?) -> !this",
-              "!effects" : ["custom tabris_Proxy_set"],
-              "!doc" : "Sets an action property. Returns the action itself.",
-              "!data": {
-                "!lint": "tabrisSet_lint"
-               }
-            },
-            "on" : {
-              "!type" : "fn(type: string, listener: fn()) -> !this",
-              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
-              "!doc" : "Binds a listener function to the action. The listener will be invoked whenever an event of the given event type is fired.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
-              "!data": {
-                "!lint": "tabrisEvent_lint"
-              }
-            }
+            "!proto" : "types.Widget.prototype"
           }
         },
         "Widget" : {
           "!type" : "fn()",
-          "prototype" : {
+          "prototype" : extend({}, eventsAPI.proxy, propertiesAPI.proxy, {
             "id" : {
               "!type": "string",
               "!doc": "Direct access to the value of the property of the same name. May be used instead of \"widget.get(\"id\");\" Do not use this field to change the value, instead use \"widget.set(\"id\", id);\"."
@@ -1024,23 +1095,6 @@
             "type" : {
               "!type": "string",
               "!doc": "The exact string that was used to create this widget using the \"tabris.create\" method."
-            },
-            "get" : {
-              "!type" : "fn(name: string) -> !custom:tabris_Proxy_get",
-              "!doc" : "Gets the current value of the given property.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codegetnamecode",
-              "!data": {
-                "!lint": "tabrisGet_lint"
-              }
-            },
-            "set" : {
-              "!type" : "fn(name: string, value: ?) -> !this",
-              "!effects" : ["custom tabris_Proxy_set"],
-              "!doc" : "Sets the given property.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codesetname-valuecode",
-              "!data": {
-                "!lint": "tabrisSet_lint"
-               }
             },
             "animate" : {
               "!type" : "fn(animationProperties: ?, options: ?)",
@@ -1061,33 +1115,6 @@
               "!type" : "fn(selector?: string) -> +types.WidgetCollection",
               "!doc" : "Returns the list of children of this widget as a WidgetCollection.",
               "!url" : "https://tabrisjs.com/documentation/widgets#codechildrencode"
-            },
-            "on" : {
-              "!type" : "fn(type: string, listener: fn()) -> !this",
-              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
-              "!doc" : "Adds the listener to the list of functions to be notified when event is fired. In the listener function, \"this\" will point to the widget itself.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
-              "!data": {
-                "!lint": "tabrisEvent_lint"
-              }
-            },
-            "once" : {
-              "!type" : "fn(type: string, listener: fn()) -> !this",
-              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
-              "!doc" : "Same as on, but removes the listener after it has been invoked by an event.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode",
-              "!data": {
-                "!lint": "tabrisEvent_lint"
-              }
-            },
-            "off" : {
-              "!type" : "fn(type?: string, listener?: fn()) -> !this",
-              "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
-              "!doc" : "Removes a previously-bound listener function from a widget. If no context is specified, all of the versions of the listener with different contexts will be removed. If no listener is specified, all listeners for the event will be removed. If no type is specified, callbacks for all events will be removed. Returns the widget itself.",
-              "!url" : "https://tabrisjs.com/documentation/widgets#codeofftype-listener-contextcode",
-              "!data": {
-                "!lint": "tabrisEvent_lint"
-              }
             },
             "trigger" : {
               "!type" : "fn(type?: string, param?: ?) -> !this",
@@ -1113,7 +1140,7 @@
               "!doc" : "Like children, but returns the list of all descendants of this widget as a WidgetCollection.",
               "!url" : "https://tabrisjs.com/documentation/selector#widgetlike-api"
             }
-          }
+          })
         },
         "WidgetCollection": {
           "!type" : "fn()",
@@ -1431,24 +1458,26 @@
           "!lint": "tabrisCreate_lint"
         }
       },
-      "ui": {
+      "app": extend({}, eventsAPI.tabris, {
+        "!doc": "The object tabris.app provides information about the application."
+      }),
+      "device": extend({}, eventsAPI.tabris, propertiesAPI.tabris, {
+        "!doc": "The object tabris.app provides information about the application."
+      }),
+      "ui": extend({}, eventsAPI.tabris, propertiesAPI.tabris, {
         "!doc": "The object \"tabris.ui\" is the root element for all widgets. This is the parent for all top-level pages, actions and the drawer.",
-        "set": {
-          "!type": "fn(name: string, value: ?) -> !this",
-          "!effects": ["custom tabris_UI_set"],
-          "!doc": "Sets a tabris.ui property. Returns the tabris.ui object."
-        },
-        "get": {
-          "!type": "fn(name: string) -> !custom:tabris_UI_get",
-          "!doc": "Gets the current value of the given tabris.ui property."
-        },
-        "on": {
-          "!type": "fn(type: string, listener: fn()) -> !this",
-          "!effects": ["custom tabris_UI_eventtype", "call !1 this=!this"],
-          "!doc": "Adds the listener to the list of functions to be notified when event is fired. In the listener function, \"this\" will point to tabris.ui itself.",
-          "!url": "https://tabrisjs.com/documentation/widgets#codeontype-listener-contextcode"
-        }
-      }
+      })
     }
   };
 });
+
+
+function extend(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+    for (var name in source) {
+      target[name] = source[name];
+    }
+  }
+  return target;
+};
