@@ -1,24 +1,13 @@
 var util = require("./util");
 
-exports['test Button completion'] = function() {
+var properties = [
+  {name: "alignment", type: "string"},
+  {name: "image", type: "Image"},
+  {name: "text", type: "string"}
+];
 
-  // Widget#children() is an array of Widget
-  util.assertCompletion("var button = tabris.create('Button', {});" +
-	"var children = button.children();" +
-	"children.", {
-    "name":"concat",
-    "type":"fn(other: [?])",
-    "origin":"ecma5"
-  }, null, null, "concat");
- 
-  util.assertCompletion("var button = tabris.create('Button', {});" +
-	"var children = button.children();" +
-	"children.forEach(function(elt) {elt.", {
-	"name":"get",
-    "type":"fn(name: string)",
-    "origin":"tabris"
-  }, null, null, "get");
-  
-}
+var events = [{name: "select"}];
 
-if (module == require.main) require("test").run(exports);
+module.exports = util.runCommonTests("Button", {properties: properties, events: events});
+
+if (module === require.main) require("test").run(module.exports);

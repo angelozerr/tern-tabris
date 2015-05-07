@@ -15,6 +15,7 @@
       "set": "name",
       "get": "name",
       "on": "type",
+      "once": "type",
       "off": "type",
       "trigger": "type"
     };
