@@ -10,15 +10,16 @@
     "url": "git://github.com/angelozerr/tern-tabris.git"
   },
   "scripts": {
+    "publish": "node ./scripts/git-tag.js",
     "test": "node ./test/all.js"
-  },    
+  },
   "dependencies": {
     "tern": ">=0.10.0",
     "acorn": ">=1.0.0"
   },
-  "devDependencies": { 
-  	"test": ">=0.0.5" 
-  },  
+  "devDependencies": {
+  	"test": ">=0.0.5"
+  },
   "keywords": [
     "tern",
     "tabris"
