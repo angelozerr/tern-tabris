@@ -1,17 +1,25 @@
 var util = require("./util");
 
-exports['test Action completion'] = function() {
+var inheriting = ["SearchAction"];
 
-  // get('text')  doesn't exists for Action
-  util.assertCompletion("var action = tabris.create('Action', {});action.get('text').", {
-  }, null, null, "get");
+var properties = [
+  {name: "enabled", type: "bool"},
+  {name: "textColor", type: "Color"},
+  {name: "image", type: "Image"},
+  {name: "placementPriority", type: "string"},
+  {name: "title", type: "string"},
+  {name: "visible", type: "bool"}
+];
 
-  util.assertCompletion("var action = tabris.create('Action', {});action.get('image').", {
-    "name":"height",
-    "type":"number",
-    "origin":"tabris"
-  }, null, null, "height");
-  
-}
+var events = [{name: "select", origin: "Action"}];
 
-if (module == require.main) require("test").run(exports);
+var prototype = [{name: "on", type: "fn(type: string, listener: fn())", returnType: "Action"}];
+
+module.exports = util.runCommonTests("Action", {
+  properties: properties,
+  events: events,
+  prototype: prototype,
+  inheriting: inheriting
+});
+
+if (module === require.main) require("test").run(exports);
