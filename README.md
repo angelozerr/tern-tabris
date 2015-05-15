@@ -40,6 +40,8 @@ simply run
 $ npm install tern-tabris
 ```
 
+You can find tern-tabris to the [npm registry ](https://www.npmjs.com/package/tern-tabris)
+
 ## Configuration
 
 `tabris` support tabris.
