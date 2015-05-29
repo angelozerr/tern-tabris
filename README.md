@@ -1,6 +1,7 @@
 # tern-tabris
 
 [![Build Status](https://secure.travis-ci.org/angelozerr/tern-tabris.png)](http://travis-ci.org/angelozerr/tern-tabris)
+[![NPM version](https://img.shields.io/npm/v/tern-tabris.svg)](https://www.npmjs.org/package/tern-tabris)
 
 [tern-tabris](https://github.com/angelozerr/tern-tabris) is a plugin which adds support for [tabris.js](https://github.com/eclipsesource/tabris-js) to the JavaSript code intelligence system [Tern](http://ternjs.net/).
 
