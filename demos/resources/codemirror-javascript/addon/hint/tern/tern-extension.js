@@ -54,8 +54,18 @@
           var from = Pos(data.from.line, data.from.ch);
           var to = Pos(data.to.line, data.to.ch);
           var ternCompletion = completion.data;
-          var template = getInsertTemplate(ternCompletion);
-          template.insert(cm, data);
+          var inserText = getInsertText(ternCompletion);
+          cm.replaceRange(inserText.text, from, to);
+          var firstParam = inserText.firstParam
+          if (firstParam != null) {
+            var name = ternCompletion.name;
+            // the function to insert has parameters, select the first
+            // parameter.
+            cm.setSelection(
+                Pos(data.from.line, data.from.ch + name.length + 1), Pos(
+                    data.to.line, data.from.ch + name.length + 1
+                        + firstParam.length));
+          }
         };
       }
       if (CodeMirror.templatesHint) {
@@ -131,14 +141,14 @@
   CodeMirror.tern.getServer = getServer;
 
   function startsWith(str, token) {
-    return str.slice(0, token.length).toUpperCase() == token.toUpperCase();
+    return str && str.slice(0, token.length).toUpperCase() == token.toUpperCase();
   }
 
   function getText(completion) {
     var text = completion.name;
     var type = completion.type;
     var returnType = null;
-    if (type && startsWith(type, 'fn(')) {
+    if (startsWith(type, 'fn(')) {
       var bracket = 0;
       var afterStartFn = type.substring(2, type.length);
       var i = 0;
@@ -168,13 +178,12 @@
     return text;
   }
 
-  function getInsertTemplate(completion) {
-    var tokens = [completion.name];
-
+  function getInsertText(completion) {
+    var text = completion.name;
     var type = completion.type;
-    var firstParam = null, currentParam = null, typeParsing = false, optionalParam = false;
+    var firstParam = null, currentParam = null, typeParsing = false;
     if (startsWith(type, 'fn(')) {
-      tokens.push('(');
+      text += '(';
       var bracket = 0;
       var afterStartFn = type.substring(2, type.length);
       var i = 0;
@@ -200,21 +209,16 @@
               } else {
                 if (c == ':') {
                   typeParsing = true;
-                  if(!optionalParam) {
-                    if (firstParam == null) {
-                      firstParam = currentParam;
-                    } else {
-                      tokens.push(', ');
-                    }
-                    tokens.push({variable: currentParam});
+                  if (firstParam == null) {
+                    firstParam = currentParam;
+                  } else {
+                    text += ', ';
                   }
+                  text += currentParam;
                   currentParam = null;
-                  optionalParam = false;
                 } else {
                   if (c != ' ' && c != '?') {
                     currentParam += c;
-                  } else if(c == '?') {
-                    optionalParam = true;
                   }
                 }
               }
@@ -224,11 +228,12 @@
         if (bracket == 0)
           break;
       }
-      tokens.push(')');
+      text += ')';
     }
-
-    tokens.push({cursor: true});
-    return new CodeMirror.templatesHint.Template({tokens: tokens});
+    return {
+      "text" : text,
+      "firstParam" : firstParam
+    };
   }
 
   CodeMirror.defineOption("ternWith", false, function(cm, val, old) {
