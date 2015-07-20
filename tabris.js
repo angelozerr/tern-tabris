@@ -552,6 +552,10 @@
           }
         },
         "WidgetProperties" : extend({}, propertiesAPI.proxy, {
+          "class": {
+            "!type" : "string",
+            "!doc" : "A string containing a whitespace separated list of \"classes\". A class is an arbitrary name for a state or category the widget should be identifiable by. It may only contain alphanumeric characters, \"_\" and \"-\"."
+          },
           "id": {
             "!type" : "string",
             "!doc" : "A string to identify the widget by using selectors. Id's are optional. It is strongly recommended that they are unique within a page."
@@ -1089,6 +1093,10 @@
         "Widget" : {
           "!type" : "fn()",
           "prototype" : extend({}, eventsAPI.proxy, propertiesAPI.proxy, {
+            "apply" : {
+              "!type" : "fn(properties: ?)",
+              "!doc" : "Applies the given properties to all descendants that match the associated selector(s). \"properties\" is an object in the format \"{Selector: {property: value, property: value, ... }, Selector: ...}\"."
+            },
             "id" : {
               "!type": "string",
               "!doc": "Direct access to the value of the property of the same name. May be used instead of \"widget.get(\"id\");\" Do not use this field to change the value, instead use \"widget.set(\"id\", id);\"."
