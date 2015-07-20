@@ -1,5 +1,5 @@
 module.exports = {
-  typesWithoutCompletion: ["bool", "Color", "Font"],
+  typesWithoutCompletion: ["bool", "Color", "Font", "ItemHeight", "CellType"],
   types: {
     fn: {
       "name" : "apply",

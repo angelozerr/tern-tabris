@@ -395,6 +395,8 @@
           "!doc": "Fonts are specified as strings using the shorthand syntax known from CSS. The font family may be omitted, in this case the default system font will be used.",
           "!url": "https://tabrisjs.com/documentation/1.1/types#font"
         },
+        "CellType": {},
+        "ItemHeight": {},
         "Image": {
           "!doc": "Image object associated with the element.",
           "!url": "https://tabrisjs.com/documentation/1.1/types#image",
@@ -704,11 +706,11 @@
         "CollectionViewProperties": {
           "initializeCell" : {
             "!type" : "fn()",
-            "!doc" : "A callback used to initialize a collection cell. Cells are created by the framework and recycled on scrolling. This callback receives an empty collection cell as an argument and appends widgets to it. The cell triggers an \"itemchange\" event (name subject to change) with a single element from the items array as a callback argument."
+            "!doc" : "A callback used to initialize a collection cell by attaching widget and \"change:item\" listener. Cells are created by the framework and recycled on scrolling. This callback receives the cell as the first and the cell type as second parameter."
           },
           "itemHeight" : {
-            "!type" : "number",
-            "!doc" : "The height of a collection cell."
+            "!type" : "!propertyTypes.ItemHeight",
+            "!doc" : "The height of a collection cell. If set to a function, this function will be called for every item, providing the item and the cell type as parameters, and must return the item height for the given item."
           },
           "items" : {
             "!type" : "[?]",
@@ -725,6 +727,10 @@
           "refreshMessage" : {
             "!type" : "string",
             "!doc" : "The message text displayed together with the refresh indicator. Currently not supported on Android. Default: \"\"."
+          },
+          "cellType" : {
+            "!type" : "!propertyTypes.CellType",
+            "!doc" : "The name of the cell type to use for a given item. This name will be passed to the initializeCell and itemHeight functions. Cells will be reused only by items that require the same cell type. If set to a function, this function will be called for every item, providing the item as a parameter, and must return a name for the cell type to use for the given item."
           }
         },
         "PickerProperties": {
