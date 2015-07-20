@@ -1464,7 +1464,15 @@
         }
       },
       "app": extend({}, eventsAPI.tabris, {
-        "!doc": "The object tabris.app provides information about the application."
+        "!doc": "The object tabris.app provides information about the application.",
+        "reload" : {
+          "!type" : "fn() -> !this",
+          "!doc" : "Forces the running application to reload the main module and start over."
+        },
+        "installPatch" : {
+          "!type" : "fn(url: string, callback: fn()) -> !this",
+          "!doc" : "Installs a patch from the given URL. When the patch is successfully installed, it will remain inactive until the application is reloaded."
+        }
       }),
       "device": extend({}, eventsAPI.tabris, propertiesAPI.tabris, {
         "!doc": "The object tabris.device provides information about the device that executes the application. All properties are read-only."
