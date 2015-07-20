@@ -691,6 +691,12 @@
             "!doc" : "The label text of the check box."
           }
         },
+        "SwitchProperties": {
+          "selection" : {
+            "!type" : "bool",
+            "!doc" : "The checked state of the switch. Default: \"false\"."
+          }
+        },
         "CollectionViewProperties": {
           "initializeCell" : {
             "!type" : "fn()",
@@ -962,6 +968,14 @@
             "!doc": "Fired when the check box is checked or unchecked. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
           }
         },
+        "SwitchEvents": {
+          "change:selection": {
+            "!doc": "Fired when the selection property changes. Parameters are: \"widget\", \"selection\", \"options\"."
+          },
+          "select": {
+            "!doc": "Fired when the switch is toggled by the user. Parameters are: \"widget\", \"selection\", \"options\"."
+          }
+        },
         "CollectionViewEvents": {
           "select": {
             "!doc": "Fired when a collection item is selected. Parameters are: \"collectionView\", \"item\", \"{index: number}\""
@@ -1214,6 +1228,14 @@
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/1.1/api/CheckBox",
           "!doc" : "A check box widget.",
+          "prototype" : {
+            "!proto" : "types.Widget.prototype"
+          }
+        },
+        "Switch" : {
+          "!type" : "fn()",
+          "!url": "https://tabrisjs.com/documentation/1.1/api/Switch",
+          "!doc" : "A switch widget that can be toggled.",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
           }
