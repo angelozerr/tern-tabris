@@ -1486,6 +1486,26 @@
       "ui": extend({}, eventsAPI.tabris, propertiesAPI.tabris, {
         "!doc": "The object \"tabris.ui\" is the root element for all widgets. This is the parent for all top-level pages, actions and the drawer.",
       })
+    },
+    "setTimeout": {
+      "!type": "fn(callback: fn(), delay: number, args?: ?) -> number",
+      "!doc": "Calls the given function with \"args\" (and all following parameters) after the specified delay. The actual delay may be slightly longer than the given one. Returns \"timeoutID\".",
+      "!url": "https://tabrisjs.com/documentation/1.1/w3c-api"
+    },
+    "setInterval": {
+      "!type": "fn(callback: fn(), delay: number, args?: ?) -> number",
+      "!doc": "Calls the given function with \"args\" (and all following parameters) repeatedly, each time waiting the given delay. The actual delay may be slightly longer than the given one. Returns \"intervalID\".",
+      "!url": "https://tabrisjs.com/documentation/1.1/w3c-api"
+    },
+    "clearTimeout": {
+      "!type": "fn(id: number)",
+      "!doc": "Cancels the running timeout associated with the given id. When given an invalid ID, nothing happens.",
+      "!url": "https://tabrisjs.com/documentation/1.1/w3c-api"
+    },
+    "clearInterval": {
+      "!type": "fn(id: number)",
+      "!doc": "Cancels the running interval associated with the given id. When given an invalid ID, nothing happens.",
+      "!url": "https://tabrisjs.com/documentation/1.1/w3c-api"
     }
   };
 });
