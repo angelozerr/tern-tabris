@@ -1437,7 +1437,7 @@
         "!doc": "The object tabris.app provides information about the application."
       }),
       "device": extend({}, eventsAPI.tabris, propertiesAPI.tabris, {
-        "!doc": "The object tabris.app provides information about the application."
+        "!doc": "The object tabris.device provides information about the device that executes the application. All properties are read-only."
       }),
       "ui": extend({}, eventsAPI.tabris, propertiesAPI.tabris, {
         "!doc": "The object \"tabris.ui\" is the root element for all widgets. This is the parent for all top-level pages, actions and the drawer.",
