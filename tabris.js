@@ -62,7 +62,9 @@
       return infer.ANull;
     var cx = infer.cx(), server = cx.parent, name = argNodes[0].value, locals = cx.definitions.tabris["types"], tabrisType = locals.hasProp(name);
     argNodes[0]._tabris = {"type" : "tabris_create"};
-    if (tabrisType) return new infer.Obj(tabrisType.getType().getProp("prototype").getType());
+    if (tabrisType) {
+      return new infer.Obj(tabrisType.getType().getProp("prototype").getType());
+    }
     return infer.ANull;
   });
 
@@ -181,15 +183,34 @@
   tern.registerPlugin("tabris", function(server, options) {
 	registerLints();
     return {defs: defs,
-      passes: {completion: completion}};
+      passes: {typeAt: findTypeAt,
+               completion: findCompletions}};
   });
+  
+  function findTypeAt(_file, _pos, expr, type) {
+    if (!expr || expr.node.type != "Literal" ||
+        typeof expr.node.value != "string" || !expr.node._tabris)
+      return type;
 
-  function completion(file, query) {
+    type = Object.create(type);
+
+    var cx = infer.cx(), tabrisType;
+    switch(expr.node._tabris.type) {
+      case "tabris_create":
+        var types = cx.definitions.tabris["types"];
+        tabrisType = types.hasProp(expr.node.value);
+        break;
+    }
+    if (tabrisType && tabrisType.doc) type.doc = tabrisType.doc;
+    if (tabrisType && tabrisType.url) type.url = tabrisType.url;
+    if (tabrisType && tabrisType.origin) type.origin = tabrisType.origin;
+    return type;
+  }  
+
+  function findCompletions(file, query) {
     function getQuote(c) {
       return c === '\'' || c === '"' ? c : null;
     }
-
-    if (!query.end) return; // remove this line, once tern will be released
 
     var wordPos = tern.resolvePos(file, query.end);
     var word = null, completions = [];
@@ -240,7 +261,7 @@
         switch(nodeArg._tabris.type) {
           case "tabris_Proxy_get":
           case "tabris_Proxy_set":
-            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
+            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto;
             while(proto) {
               var objType = getProxyObjectProperties(proto);
               if (objType) infer.forAllPropertiesOf(objType, gather);
@@ -248,7 +269,7 @@
             }
             break;
           case "tabris_Proxy_eventtype":
-            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
+            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto;
             while(proto) {
               var objType = getProxyEventProperties(proto);
               if (objType) infer.forAllPropertiesOf(objType, gather);
@@ -262,13 +283,13 @@
             infer.forAllPropertiesOf(types, gather);
             break;
           case "tabris_eventtype":
-            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto, propertyType = null;
+            var widgetType = nodeArg._tabris.proxyType;
             var objType = getEventProperties(widgetType);
             if (objType) infer.forAllPropertiesOf(objType, gather);
             break;
           case "tabris_get":
           case "tabris_set":
-            var widgetType = nodeArg._tabris.proxyType, props = widgetType.props, propertyType = null;
+            var widgetType = nodeArg._tabris.proxyType;
             var objType = getProperties(widgetType);
             if (objType) infer.forAllPropertiesOf(objType, gather);
             break;
@@ -277,7 +298,6 @@
         return {start: tern.outputPos(query, file, wordStart),
           end: tern.outputPos(query, file, wordEnd),
           isProperty: false,
-          isStringAround: true,
           startQuote: startQuote,
           endQuote: endQuote,
           completions: completions}
