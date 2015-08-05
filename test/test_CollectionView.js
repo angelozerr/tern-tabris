@@ -10,8 +10,9 @@ var prototype = [
 ];
 
 var properties = [
+  {name: "cellType", type: "CellType"},
   {name: "initializeCell", type: "fn"},
-  {name: "itemHeight", type: "number"},
+  {name: "itemHeight", type: "ItemHeight"},
   {name: "items", type: "array"},
   {name: "refreshMessage", type: "string"},
 ];
