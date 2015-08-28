@@ -67,27 +67,27 @@
   <body>
     
     <h1>Demo with Tabris Tern plugin</h1>
-  <p>See <a href="https://github.com/angelozerr/tern-tabris">https://github.com/angelozerr/tern-tabris</a> for more infos.</p>  
-    <form><textarea id="code" name="code">tabris. // Ctrl+Space shows create, load
+  <p>See <a href="https://github.com/angelozerr/tern-tabris">https://github.com/angelozerr/tern-tabris</a> for more infos.</p>
+    <form><textarea id="code" name="code">tabris. // Ctrl+Space shows create, app, device, etc.
 
 /* Demo with tabis.create */
 var undefined = tabris.create("Undefined", {
 
 });
-undefined. // here Ctrl space shows nothing
+undefined. // here Ctrl+space shows nothing
 
 var button = tabris.create("Button", {
 
 });
-button. // here Ctrl space shows button properties/methods
+button. // here Ctrl+space shows Button properties/methods
 
 /* Demo with widget.get */
 
 var text = button.get('text');
-text. // here Ctrl+Space shows methods of string (charAt, slice, etc)
+text. // here Ctrl+Space shows methods of string (charAt, slice, etc.)
 
 var bounds = button.get('bounds');
-bounds. // here Ctrl+Space shows methods of Bounds (left, top, etc)
+bounds. // here Ctrl+Space shows methods of Bounds (left, top, etc.)
 bounds.left. // here Ctrl+Space shows methods of Number
 
 /* Demo with widget.set */
@@ -95,9 +95,9 @@ button.set('text', '...'). // set method is chainable, here Ctrl+Space shows met
 
 /* Demo with widget.children() */
 var children = button.children();
-children. // here Ctrl+Space shows arrays methods like concat, pop,
+children. // here Ctrl+Space shows WidgetCollection methods like filter, first, etc.
 children.forEach(function(elt) {
-  elt. // here Ctrl+Space shows Widget methods (animate, append, etc)
+  elt. // here Ctrl+Space shows Widget methods (animate, appendTo, etc.)
 });
 </textarea></form>
   </body>

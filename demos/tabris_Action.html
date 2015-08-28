@@ -67,29 +67,26 @@
   <body>
     
     <h1>Demo with Tabris Tern plugin</h1>
-	<p>See <a href="https://github.com/angelozerr/tern-tabris">https://github.com/angelozerr/tern-tabris</a> for more infos.</p>  
-    <form><textarea id="code" name="code">tabris.load(function() {
-
-  var page = tabris.create("Page", {
-    title: "Actions - Placement",
-    topLevel: true
-  });
-
-  var createAction = function(title, imageName, placementPriority) {
-    tabris.create("Action", {
-      title: title,
-      placementPriority: placementPriority,
-      image: {src: "images/" + imageName}
-    });
-  };
-
-  createAction("Search", "search.png", "HIGH");
-  createAction("Share", "share.png", "LOW");
-  createAction("Settings", "settings.png", "LOW");
-
-  page.open();
-
+	<p>See <a href="https://github.com/angelozerr/tern-tabris">https://github.com/angelozerr/tern-tabris</a> for more infos.</p>
+    <form><textarea id="code" name="code">
+var page = tabris.create("Page", {
+  title: "Actions - Placement",
+  topLevel: true
 });
+
+var createAction = function(title, imageName, placementPriority) {
+  tabris.create("Action", {
+    title: title,
+    placementPriority: placementPriority,
+    image: {src: "images/" + imageName}
+  });
+};
+
+createAction("Search", "search.png", "high");
+createAction("Share", "share.png", "low");
+createAction("Settings", "settings.png", "low");
+
+page.open();
 </textarea></form>
   </body>
 </html>
