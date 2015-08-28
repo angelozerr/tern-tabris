@@ -30,6 +30,8 @@
   <script src="../node_modules/tern/lib/comment.js"></script>
   <script src="../node_modules/tern/lib/infer.js"></script>
 
+  <script src="../tabris.js"></script>
+
   <!-- Official CodeMirror Tern addon -->
   <script src="../node_modules/codemirror/addon/tern/tern.js"></script>
 
@@ -55,20 +57,11 @@
   <script src="../node_modules/codemirror-extension/addon/hover/text-hover.js"></script>
   <script src="resources/codemirror-javascript/addon/hint/tern/tern-hover.js"></script>
 
-  <!-- Tern Lint -->
-  <link rel="stylesheet" href="../node_modules/codemirror/addon/lint/lint.css">
-  <script src="../node_modules/tern-lint/lint.js"></script>
-  <script src="../node_modules/tern-lint/codemirror/addon/lint/tern-lint.js"></script>
-  <script src="../node_modules/codemirror/addon/lint/lint.js"></script>
-
   <!-- tabris.js Templates -->
   <script src="../codemirror/addon/hint/javascript/tabris-templates.js"></script>
 
   <!-- tabris.js Context Autocomplete -->
   <script src="../codemirror/addon/hint/context-autocomplete-hint.js"></script>
-
-  <script src="../tabris.js"></script>
-
 
 </head>
 <body>
@@ -77,25 +70,27 @@
   <p>See <a href="https://github.com/angelozerr/tern-tabris">https://github.com/angelozerr/tern-tabris</a> for more infos.</p>
   <form>
     <textarea id="code" name="code">
-var button = tabris.create("Button", {
-
+var page = tabris.create("Page", {
+  title: "TextView - Markup",
+  topLevel: true
 });
 
-var selectionHandler = function() {
-  this. // here Ctrl+Space shows methods of Widget (animate, etc)
-  console.log("Button selected!");
-};
-button.on("select", selectionHandler);
+var markup = "<b>bold</b>, <i>italic</i>, <big>big</big>, <small>small</small>, " +
+  "<ins>ins</ins>, <del>del</del>, <a>link</a>";
+
+tabris.create("TextView", {
+  layoutData: {left: 10, top: 10, right: 10},
+  text: "TextView with markup not enabled:\n" + markup
+}).appendTo(page);
+
+tabris.create("TextView", {
+  layoutData: {left: 10, top: "prev() 30", right: 10},
+  text: "TextView with markup enabled:\n" + markup,
+  markupEnabled: true
+}).appendTo(page);
+
+page.open();
     </textarea>
   </form>
-<script type="text/javascript">
-  $(function() {
-    var editor = cmEditor.editor;
-    var server = new CodeMirror.TernServer({plugins: {"tabris" : {}, "lint": {}}});
-    editor.setOption("gutters",["CodeMirror-lint-markers"]);
-    editor.setOption("lint", {getAnnotations: CodeMirror.ternLint, async : true, server: server});
-    editor.on("cursorActivity", function(cm) { server.updateArgHints(cm); });
-  });
-</script>
 </body>
 </html>
