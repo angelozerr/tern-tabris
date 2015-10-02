@@ -1168,7 +1168,7 @@
             "get" : {
               "!type" : "fn(name: string) -> !custom:tabris_Proxy_get",
               "!doc" : "Gets the current value of the given property.",
-              "!url" : "https://tabrisjs.com/documentation/1.3/api/Properties#get-property-",
+              "!url" : "https://tabrisjs.com/documentation/1.3/api/Properties#getproperty",
               "!data": {
                 "!lint": "tabrisGet_lint",
                 "!guess-type": "tabrisGet_guessType"
@@ -1178,7 +1178,7 @@
               "!type" : "fn(name: string, value: ?) -> !this",
               "!effects" : ["custom tabris_Proxy_set"],
               "!doc" : "Sets the given property. Supports chaining.",
-              "!url" : "https://tabrisjs.com/documentation/1.3/api/Properties#set-property-value-",
+              "!url" : "https://tabrisjs.com/documentation/1.3/api/Properties#setproperty-value",
               "!data": {
                 "!lint": "tabrisSet_lint"
               }
@@ -1187,7 +1187,7 @@
               "!type" : "fn(type: string, listener: fn()) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Adds a listener to the list of functions to be notified when event is fired. Supports chaining.",
-              "!url" : "https://tabrisjs.com/documentation/1.3/api/Events#on-event-listener-context-",
+              "!url" : "https://tabrisjs.com/documentation/1.3/api/Events#onevent-listener-context",
               "!data": {
                 "!lint": "tabrisEvent_lint"
               }
@@ -1196,7 +1196,7 @@
               "!type" : "fn(type: string, listener: fn(), context?: ?) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Same as on, but removes the listener after it has been invoked by an event. Supports chaining.",
-              "!url" : "https://tabrisjs.com/documentation/1.3/api/Events#once-event-listener-context-",
+              "!url" : "https://tabrisjs.com/documentation/1.3/api/Events#onceevent-listener-context",
               "!data": {
                 "!lint": "tabrisEvent_lint"
               }
@@ -1205,7 +1205,7 @@
               "!type" : "fn(event?: string, listener?: fn(), context?: ?) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
               "!doc" : "Removes all occurrences of listener that are bound to event and context from this widget. Supports chaining.",
-              "!url" : "https://tabrisjs.com/documentation/1.3/api/Events#off-event-listener-context-",
+              "!url" : "https://tabrisjs.com/documentation/1.3/api/Events#offevent-listener-context",
               "!data": {
                 "!lint": "tabrisEvent_lint"
               }
@@ -1607,7 +1607,7 @@
       "create" : {
         "!type" : "fn(type: string, properties?: ?) -> !custom:tabris_create",
         "!doc" : "Creates a native widget of a given type and returns its reference.",
-        "!url" : "https://tabrisjs.com/documentation/1.3/widget-basics#tabris-create-type-properties-",
+        "!url" : "https://tabrisjs.com/documentation/1.3/widget-basics#tabriscreatetype-properties",
         "!data": {
           "!lint": "tabrisCreate_lint",
           "!guess-type": "tabrisCreate_guessType"
