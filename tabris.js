@@ -435,6 +435,10 @@
             "!doc": "Vertical translation (shift) in dip."
           }
         },
+        "Selector": {
+          "!doc": "Selectors are used to filter a given list of widgets. It can be function returning a boolean for a given widget. However, more commonly a selector is a string that may either reference a widgets type (e.g. \"Button\", \"TextView\"), or its id (\"#myButton\", \"#myTextView\").",
+          "!url": "https://tabrisjs.com/documentation/1.2/selector"
+        },
         "margin": {
           "!doc": "Distance to a parent's or sibling's opposing edge in one of these formats: offset, percentage, Widget, \"selector\", \"prev()\", \"percentage offset\", \"selector offset\", \"prev() offset\", [Widget, offset], [percentage, offset], [selector, offset], [\"prev()\", offset]",
           "!url": "https://tabrisjs.com/documentation/1.2/types#margin"
@@ -489,11 +493,11 @@
             "!doc" : "The ratio between physical pixels and device independent pixels. This property is also available globally as \"window.devicePixelRatio\""
           },
           "screenHeight" : {
-            "!type" : "string",
+            "!type" : "number",
             "!doc" : "The entire height of the device's screen in device independent pixel. Depends on the current device orientation. This property is also available globally as screen.height."
           },
           "screenWidth" : {
-            "!type" : "string",
+            "!type" : "number",
             "!doc" : "The entire width of the device's screen in device independent pixel. Depends on the current device orientation. This property is also available as globally as screen.width."
           },
           "version" : {
@@ -711,6 +715,22 @@
           "selection" : {
             "!type" : "bool",
             "!doc" : "The checked state of the switch. Default: \"false\"."
+          },
+          "thumbOnColor" : {
+            "!type" : "!propertyTypes.Color",
+            "!doc" : "The color of the movable thumb, when switched \"on\"."
+          },
+          "thumbOffColor" : {
+            "!type" : "!propertyTypes.Color",
+            "!doc" : "The color of the movable thumb, when switched \"off\"."
+          },
+          "trackOnColor" : {
+            "!type" : "!propertyTypes.Color",
+            "!doc" : "The color of the track that holds the thumb, when switched \"on\"."
+          },
+          "trackOffColor" : {
+            "!type" : "!propertyTypes.Color",
+            "!doc" : "The color of the track that holds the thumb, when switched \"off\"."
           }
         },
         "CollectionViewProperties": {
@@ -1106,13 +1126,17 @@
           "!doc": "The object tabris.app provides information about the application.",
           "prototype": {
             "!proto": "types.Proxy.prototype",
-            "reload" : {
-              "!type" : "fn() -> !this",
-              "!doc" : "Forces the running application to reload the main module and start over."
+            "reload": {
+              "!type": "fn() -> !this",
+              "!doc": "Forces the running application to reload the main module and start over."
             },
-            "installPatch" : {
-              "!type" : "fn(url: string, callback: fn()) -> !this",
-              "!doc" : "Installs a patch from the given URL. When the patch is successfully installed, it will remain inactive until the application is reloaded."
+            "installPatch": {
+              "!type": "fn(url: string, callback: fn()) -> !this",
+              "!doc": "Installs a patch from the given URL. When the patch is successfully installed, it will remain inactive until the application is reloaded."
+            },
+            "getResourceLocation": {
+              "!type": "fn(path: string) -> string",
+              "!doc": "Returns the URL for a given resource that is bundled with the app. Can be used to access app resources like images, videos, etc. Note that these resources can only be accessed in read-only mode."
             }
           }
         },
@@ -1210,19 +1234,27 @@
             },
             "animate" : {
               "!type" : "fn(animationProperties: ?, options: ?)",
-              "!doc" : "Changes a number of widget properties with an animation. Currently, only the properties transform and opacity are supported. Does not yet return any value."
+              "!doc" : "Starts an animation that transforms the given properties from their current values to the given ones. \n\nSupported properties are \"transform\" and \"opacity\". \n\nSupported options are: \n - \"delay\" (time until the animation starts in ms, defaults to \"0\") \n - \"duration\" (in ms) \n - \"easing\" (one of \"linear\", \"ease-in\", \"ease-out\", \"ease-in-out\") \n - \"repeat\" (number of times to repeat the animation, defaults to \"0\") \n - \"reverse\" (\"true\" to alternate the direction of the animation on every repeat) \n - \"name\" (no effect, but will be given in animation events)"
             },
             "appendTo" : {
               "!type" : "fn(parent: +types.Widget) -> !this",
-              "!doc" : "Appends the widget to a parent. If the widget already has a parent, it is de-registered from the actual parent and registered with the new one. Triggers an add event on the parent. Returns the widget itself."
+              "!doc" : "Appends this widget to the given parent. The parent widget must support children (extending \"Composite\"). If the widget already has a parent, it is removed from the old parent."
+            },
+            "insertBefore" : {
+              "!type" : "fn(widget: +types.Widget) -> !this",
+              "!doc" : "Inserts this widget directly before the given widget. If the widget already has a parent, it is removed from the old parent."
+            },
+            "insertAfter" : {
+              "!type" : "fn(widget: +types.Widget) -> !this",
+              "!doc" : "Inserts this widget directly after the given widget. If the widget already has a parent, it is removed from the old parent."
             },
             "parent" : {
               "!type" : "fn() -> +types.Widget",
-              "!doc" : "Returns the widget's parent."
+              "!doc" : "Returns the parent of this widget."
             },
             "children" : {
-              "!type" : "fn(selector?: string) -> +types.WidgetCollection",
-              "!doc" : "Returns the list of children of this widget as a WidgetCollection."
+              "!type" : "fn(selector?: !propertyTypes.Selector) -> +types.WidgetCollection",
+              "!doc" : "Returns a (possibly empty) collection of all children of this widget that match the selector."
             },
             "trigger" : {
               "!type" : "fn(type?: string, param?: ?) -> !this",
@@ -1234,15 +1266,15 @@
             },
             "dispose" : {
               "!type" : "fn()",
-              "!doc" : "Disposes of the widget and all of its children. Triggers a remove event on the parent and a dispose event on itself."
+              "!doc" : "Removes this widget from its parent and destroys it. Also disposes of all its children. Triggers a \"remove\" event on the parent and a \"dispose\" event on itself. The widget can no longer be used."
             },
             "isDisposed" : {
               "!type" : "fn() -> bool",
               "!doc" : "Returns \"true\" if the widget has been disposed, otherwise \"false\"."
             },
             "find" : {
-              "!type" : "fn(selector?: string) -> +types.WidgetCollection",
-              "!doc" : "Like children, but returns the list of all descendants of this widget as a WidgetCollection."
+              "!type" : "fn(selector?: !propertyTypes.Selector) -> +types.WidgetCollection",
+              "!doc" : "Returns a (possibly empty) collection of all descendants of this widget that match the selector."
             }
           }
         },
@@ -1251,43 +1283,61 @@
           "!doc" : "A \"WidgetCollection\" is an array-like object representing a set of widgets, as returned by the widget methods \"children\" and \"find\".",
           "!url": "https://tabrisjs.com/documentation/1.2/api/WidgetCollection",
           "prototype" : {
-            "first" : {
+            "children": {
+              "!type" : "fn(selector?: !propertyTypes.Selector) -> !this",
+              "!doc" : "Returns a collection containing all children of all widgets in this collection. Provided a \"selector\" argument, it is equivalent to \"collection.children().filter(selector)\"."
+            },
+            "find": {
+              "!type" : "fn(selector?: !propertyTypes.Selector) -> !this",
+              "!doc" : "Returns a collection containing all descendants of all widgets in this collection that match the given selector."
+            },
+            "parent": {
+              "!type" : "fn() -> !this",
+              "!doc" : "Returns a collection containing all direct parents of all widgets in this collection."
+            },
+            "appendTo": {
+              "!type" : "fn(parent: +types.Composite) -> !this",
+              "!doc" : "Append all widgets in this collection to the given widget."
+            },
+            "animate": {
+              "!type" : "fn(properties: ?, options: ?)",
+              "!doc" : "Animates all widgets in this collection."
+            },
+            "dispose": {
               "!type" : "fn()",
-              "!doc" : "Same as \"collection[0]\""
+              "!doc" : "Disposes all widgets in this collection."
+            },
+            "first" : {
+              "!type" : "fn() -> +types.Widget",
+              "!doc" : "Returns the first widget in the collection. Same as \"collection[0]\"."
             },
             "last" : {
-              "!type" : "fn()",
-              "!doc" : "Same as \"collection[collection.length - 1]\""
+              "!type" : "fn() -> +types.Widget",
+              "!doc" : "Returns the last widget in the collection. Same as \"collection[collection.length - 1]\"."
             },
             "toArray" : {
-              "!type" : "fn()",
+              "!type" : "fn() -> [+types.Widget]",
               "!doc" : "Return an Array containing all widgets in the collection."
             },
             "length" : {
               "!type" : "number",
-              "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/length",
-              "!doc" : "An unsigned, 32-bit integer that specifies the number of elements in an array."
+              "!doc" : "A read-only field containing the number of widgets in the collection."
             },
             "forEach" : {
-              "!type" : "fn(f: fn(elt: +types.Widget, i: number), context?: ?)",
+              "!type" : "fn(callback: fn(widget: +types.Widget, index: number, widgetCollection: +types.WidgetCollection))",
               "!effects" : [
-                "call !0 this=!1 !this.<i> number"
+                "call !0 this=!1 !this.<index> number"
               ],
-              "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/forEach",
-              "!doc" : "Executes a provided function once per array element."
+              "!doc" : "Calls the given callback for each widget in the collection."
             },
             "filter" : {
-              "!type" : "fn(test: fn(elt: +types.Widget, i: number) -> bool, context?: ?) -> !this",
-              "!effects" : [
-                "call !0 this=!1 !this.<i> number"
-              ],
-              "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/filter",
-              "!doc" : "Creates a new array with all elements that pass the test implemented by the provided function."
+              "!type" : "fn(selector: !propertyTypes.Selector) -> !this",
+              "!doc" : "Returns a new \"WidgetCollection\" containing all widgets in this collection that match the given selector."
             },
             "indexOf" : {
-              "!type" : "fn(elt: ?, from?: number) -> number",
+              "!type" : "fn(widget: +types.Widget) -> number",
               "!url" : "https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/indexOf",
-              "!doc" : "Returns the first index at which a given element can be found in the array, or -1 if it is not present."
+              "!doc" : "Returns the index of the given widget within the collection. If there is no match the return value is \"-1\"."
             }
           }
         },
@@ -1410,12 +1460,12 @@
         "Canvas" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/1.2/api/Canvas",
-          "!doc" : "An empty widget to draw graphics on. Can also contain other widgets.",
+          "!doc" : "Canvas is a widget that can be used to draw graphics using a canvas context. Canvas context is a subset of the HTML5 \"CanvasRenderingContext2D\".",
           "prototype" : {
             "!proto" : "types.Composite.prototype",
             "getContext": {
               "!type": "fn(contextType: string, width: number, height: number) -> +types.CanvasContext",
-              "!doc" : "Returns the drawing context. The \"contextType\" must be \"2d\"."
+              "!doc" : "Returns the drawing context with the given size."
             }
           }
         },
