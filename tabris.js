@@ -8,6 +8,8 @@
 })(function(infer, tern) {
   "use strict";
 
+  var preferQuote = "\"";
+  
   var defaultRules = {
     "UnknownTabrisType" : {"severity" : "error"},
     "UnknownTabrisProperty" : {"severity" : "error"},
@@ -41,8 +43,13 @@
     tern.registerLint("tabrisSet_lint", function(node, addMessage, getRule) {
       var argNode = node.arguments[0];
       if (argNode) {
-        var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, propertyName = argNode.value;
-        if (!getProxyPropertyType(proxyType, propertyName)) addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
+        var cx = infer.cx(), proxyType = argNode._tabris && argNode._tabris.proxyType, propertyName = argNode.value, propertyType = getProxyPropertyType(proxyType, propertyName);
+        if (!propertyType) {
+          // Unknown property
+          addMessage(argNode, "Unknown tabris property '" + propertyName + "'", defaultRules.UnknownTabrisProperty.severity);
+        } else {
+          // TODO: Validate property value.
+        }
       }
     });
 
@@ -55,6 +62,55 @@
       }
     });
 
+  }
+  
+  function fillCompletions(completions, types, preferQuote) {
+    var query = {docs: true, types: true, origins: true};
+    infer.forAllPropertiesOf(types, function(prop, obj) {
+      if (obj.origin == "tabris") {
+        var name = preferQuote ? preferQuote + prop + preferQuote : prop;
+        var item = tern.addCompletion(query, completions, name, obj.hasProp(prop))
+        if (preferQuote) item.displayName = prop;
+      }
+    });
+  }
+  
+  function registerGuessTypes() {
+    if (!tern.registerGuessType) return;
+
+    // completion guess for tabris.create(
+    tern.registerGuessType("tabrisCreate_guessType", function(arg, i, file) {
+      switch(i) {
+      case 0:
+        var cx = infer.cx(), types = cx.definitions.tabris["types"];
+        var completions = [];
+        fillCompletions(completions, types, preferQuote);
+        return {
+          type: "string",
+          completions: completions
+        }
+        break;
+      }      
+    });
+    
+    // completion guess for widget.get(
+    tern.registerGuessType("tabrisGet_guessType", function(arg, i, file, objType) {
+      switch(i) {
+      case 0:
+        var completions = [], widgetType = objType.getType(), proto = widgetType.proto;
+        while(proto) {
+          var objType = getProxyObjectProperties(proto);
+          if (objType) fillCompletions(completions, objType.getType(), preferQuote);
+          proto = proto.proto;
+        }
+        return {
+          type: "string",
+          completions: completions
+        }
+        break;
+      }      
+    });    
+    
   }
 
   infer.registerFunction("tabris_create", function(_self, args, argNodes) {
@@ -84,6 +140,15 @@
 
     var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getProxyPropertyType(widgetType, propertyName);
     argNodes[0]._tabris = {"type" : "tabris_Proxy_set", "proxyType" : widgetType};
+    
+    var fnType = _self.hasProp("set").getFunctionType();
+    var result = new infer.AVal;
+    var deps = [];
+    deps.push(args[0]);
+    //deps.push(propertyType.getType());
+    //fnType.propagate(new infer.IsCallee(infer.cx().topScope, deps, null, result));
+    fnType.args = deps;
+    return result
   });
 
   infer.registerFunction("tabris_Proxy_eventtype", function(_self, args, argNodes) {
@@ -138,9 +203,10 @@
 
   tern.registerPlugin("tabris", function(server, options) {
     registerLints();
-    return {defs: defs,
-      passes: {typeAt: findTypeAt,
-               completion: findCompletions}};
+    registerGuessTypes();
+    server.on("typeAt", findTypeAt);
+    server.on("completion", findCompletions);
+    server.addDefs(defs);
   });
 
   function findTypeAt(_file, _pos, expr, type) {
@@ -164,11 +230,7 @@
   }
 
   function findCompletions(file, query) {
-    function getQuote(c) {
-      return c === '\'' || c === '"' ? c : null;
-    }
-
-    var wordPos = tern.resolvePos(file, query.end);
+    var wordEnd = tern.resolvePos(file, query.end);
     var word = null, completions = [];
     var wrapAsObjs = query.types || query.depths || query.docs || query.urls || query.origins;
     var cx = infer.cx(), overrideType = null;
@@ -183,41 +245,27 @@
         var c = completions[i];
         if ((wrapAsObjs ? c.name : c) == prop) return;
       }
-      var rec = wrapAsObjs ? {name: prop} : prop;
-      completions.push(rec);
-
-      if (obj && (query.types || query.docs || query.urls || query.origins)) {
-        var val = obj.props[prop];
-        infer.resetGuessing();
-        var type = val.getType();
-        rec.guess = infer.didGuess();
-        if (query.types)
-          rec.type = overrideType != null ? overrideType : infer.toString(type);
-        if (query.docs)
-          maybeSet(rec, "doc", val.doc || type && type.doc);
-        if (query.urls)
-          maybeSet(rec, "url", val.url || type && type.url);
-        if (query.origins)
-          maybeSet(rec, "origin", val.origin || type && type.origin);
-      }
-      if (query.depths) rec.depth = depth;
-      if (wrapAsObjs && addInfo) addInfo(rec);
+      var rec = tern.addCompletion(query, completions, prop, obj.hasProp(prop))
+      if (overrideType) rec.type = overrideType;
     }
 
-    var callExpr = infer.findExpressionAround(file.ast, null, wordPos, file.scope, "CallExpression");
+    var callExpr = infer.findExpressionAround(file.ast, null, wordEnd, file.scope, "CallExpression");
     if (callExpr && callExpr.node.arguments && callExpr.node.arguments.length && callExpr.node.arguments.length > 0) {
-      var nodeArg = callExpr.node.arguments[0];
-      if (!(nodeArg.start <= wordPos && nodeArg.end >= wordPos)) return;
-      if (nodeArg._tabris) {
-        var startQuote = getQuote(nodeArg.raw.charAt(0)), endQuote = getQuote(nodeArg.raw.length > 1 ? nodeArg.raw.charAt(nodeArg.raw.length - 1) : null);
-        var wordEnd = endQuote != null ? nodeArg.end - 1: nodeArg.end, wordStart = startQuote != null ? nodeArg.start + 1: nodeArg.start,
-        word = nodeArg.value.slice(0, nodeArg.value.length - (wordEnd - wordPos));
-        if (query.caseInsensitive) word = word.toLowerCase();
+      var argNode = callExpr.node.arguments[0];
+      if (!(argNode.start <= wordEnd && argNode.end >= wordEnd)) return;
+      if (argNode._tabris) {
+        var word = argNode.raw.slice(1, wordEnd - argNode.start), quote = argNode.raw.charAt(0)
+        if (word && word.charAt(word.length - 1) == quote)
+          word = word.slice(0, word.length - 1)
+        if (query.caseInsensitive) word = word.toLowerCase()
 
-        switch(nodeArg._tabris.type) {
+        if (argNode.end == wordEnd + 1 && file.text.charAt(wordEnd) == quote)
+          ++wordEnd;
+        
+        switch(argNode._tabris.type) {
           case "tabris_Proxy_get":
           case "tabris_Proxy_set":
-            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto;
+            var widgetType = argNode._tabris.proxyType, proto = widgetType.proto;
             while(proto) {
               var objType = getProxyObjectProperties(proto);
               if (objType) infer.forAllPropertiesOf(objType, gather);
@@ -225,7 +273,7 @@
             }
             break;
           case "tabris_Proxy_eventtype":
-            var widgetType = nodeArg._tabris.proxyType, proto = widgetType.proto;
+            var widgetType = argNode._tabris.proxyType, proto = widgetType.proto;
             while(proto) {
               var objType = getProxyEventProperties(proto);
               if (objType) infer.forAllPropertiesOf(objType, gather);
@@ -240,12 +288,17 @@
             break;
         }
 
-        return {start: tern.outputPos(query, file, wordStart),
+        return {start: tern.outputPos(query, file, argNode.start),
           end: tern.outputPos(query, file, wordEnd),
-          isProperty: false,
-          startQuote: startQuote,
-          endQuote: endQuote,
-          completions: completions}
+          completions: completions.map(function(rec) {
+            var name = typeof rec == "string" ? rec : rec.name
+            var string = JSON.stringify(name)
+            if (quote == "'") string = quote + string.slice(1, string.length -1).replace(/'/g, "\\'") + quote
+            if (typeof rec == "string") return string
+            rec.displayName = name
+            rec.name = string
+            return rec
+          })}
       }
     }
   }
@@ -1093,7 +1146,8 @@
               "!doc" : "Gets the current value of the given property.",
               "!url" : "https://tabrisjs.com/documentation/1.2/api/Properties#get-property-",
               "!data": {
-                "!lint": "tabrisGet_lint"
+                "!lint": "tabrisGet_lint",
+                "!guess-type": "tabrisGet_guessType"
               }
             },
             "set" : {
@@ -1505,7 +1559,8 @@
         "!doc" : "Creates a native widget of a given type and returns its reference.",
         "!url" : "https://tabrisjs.com/documentation/1.2/widget-basics#tabris-create-type-properties-",
         "!data": {
-          "!lint": "tabrisCreate_lint"
+          "!lint": "tabrisCreate_lint",
+          "!guess-type": "tabrisCreate_guessType"
         }
       },
       "app": {

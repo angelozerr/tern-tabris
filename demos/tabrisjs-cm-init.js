@@ -31,7 +31,8 @@ $(function() {
     },
     ternWith: {
       plugins: {
-        "tabris": {}
+        "tabris": {},
+        "guess-types": {}
       }
     }
   });
