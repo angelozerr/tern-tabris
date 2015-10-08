@@ -138,11 +138,13 @@ exports.assertProperty = function(type, fn) {
   if(typeCompletion.typesWithoutCompletion.indexOf(fn.type) < 0) {
     assertPropertyWithReturnType(type, fn);
   } else {
+    var nameWithQuote = "'" + fn.name + "'";
     exports.assertCompletion("var element = tabris.create('" + type + "', {});element.get('" + fn.name, {
-      "name" : fn.name,
+      "name" : nameWithQuote,      
       "type" : fn.type[0].toLowerCase() !== fn.type[0] ? "!propertyTypes." + fn.type : fn.type,
-      "origin" : "tabris"
-    }, null, null, fn.name);
+      "origin" : "tabris",
+      "displayName" : fn.name
+    }, null, null, nameWithQuote);
   }
 };
 
@@ -157,9 +159,11 @@ function assertPropertyWithReturnType(type, fn) {
 }
 
 exports.assertEvent = function(type, eventName, origin) {
+  var eventNameWithQuote = "'" + eventName + "'";
   exports.assertCompletion("var element = tabris.create('" + type + "', {});element.on('" + eventName, {
-    "name" : eventName,
+    "name" : eventNameWithQuote,
     "type" : "!events." + (origin ? origin : type) + "Events." + eventName,
-    "origin" : "tabris"
-  }, null, null, eventName);
+    "origin" : "tabris",
+    "displayName" : eventName
+  }, null, null, eventNameWithQuote);
 };
