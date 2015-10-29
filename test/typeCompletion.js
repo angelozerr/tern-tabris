@@ -38,7 +38,7 @@ module.exports = {
     },
     WidgetCollection: {
       "name" : "filter",
-      "type" : "fn(test: fn(elt: types.Widget, i: number) -> bool, context?: ?)",
+      "type" : "fn(selector: {})",
       "origin" : "tabris"
     },
     Bounds: {

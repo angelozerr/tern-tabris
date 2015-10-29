@@ -7,7 +7,6 @@ exports['test tabris CollectionView'] = require('./test_CollectionView');
 exports['test tabris Composite'] = require('./test_Composite');
 exports['test tabris Drawer'] = require('./test_Drawer');
 exports['test tabris ImageView'] = require('./test_ImageView');
-exports['test tabris Lint'] = require('./test_Lint');
 exports['test tabris Page'] = require('./test_Page');
 exports['test tabris Picker'] = require('./test_Picker');
 exports['test tabris ProgressBar'] = require('./test_ProgressBar');
