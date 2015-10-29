@@ -2,8 +2,7 @@ var util = require("./util");
 
 var properties = [
   {name: "items", type: "array"},
-  {name: "selectionIndex", type: "number"},
-  {name: "selection", type: "string"}
+  {name: "selectionIndex", type: "number"}
 ];
 
 var events = [

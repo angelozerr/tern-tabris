@@ -761,20 +761,32 @@
           "cellType" : {
             "!type" : "!propertyTypes.CellType",
             "!doc" : "The name of the cell type to use for a given item. This name will be passed to the initializeCell and itemHeight functions. Cells will be reused only by items that require the same cell type. If set to a function, this function will be called for every item, providing the item as a parameter, and must return a name for the cell type to use for the given item."
+          },
+          "firstVisibleIndex" : {
+            "!type" : "number",
+            "!doc" : "The first item that is currently visible on screen. This property is read-only."
+          },
+          "lastVisibleIndex" : {
+            "!type" : "number",
+            "!doc" : "The last item that is currently visible on screen. This property is read-only."
           }
         },
         "PickerProperties": {
           "items" : {
-            "!type" : "[string]",
-            "!doc" : "Array of strings containing the picker items."
+            "!type" : "[?]",
+            "!doc" : "An array of data items to be displayed by the picker. If the items aren't strings, the \"itemText\" property must be set to a function to extract item texts."
+          },
+          "itemText": {
+            "!type": "fn()",
+            "!doc": "A function that returns the string to display for a given data item. Defaults to mapping items to their default string representation."
           },
           "selectionIndex" : {
             "!type" : "number",
-            "!doc" : "Index of the currently selected picker item."
+            "!doc" : "The index of the currently selected item."
           },
           "selection" : {
-            "!type" : "string",
-            "!doc" : "Text of the selected picker item."
+            "!type" : "?",
+            "!doc" : "The currently selected data item."
           }
         },
         "ImageViewProperties": {
@@ -1025,6 +1037,9 @@
           },
           "refresh": {
             "!doc": "Fired when the user requested a refresh. An event listener should reset the \"refreshIndicator\" property when refresh is finished."
+          },
+          "scroll": {
+            "!doc": "Fired while the collection view is scrolling. Parameters are: \"collectionView\", \"event\". The event contains the scroll delta of this scroll event: \"{deltaX: number, deltaY: number}\". The value of \"deltaY\" will be positive when scrolling up and negative when scrolling down."
           }
         },
         "CompositeEvents": {
