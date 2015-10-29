@@ -130,7 +130,7 @@
 
     var widgetType = _self.getType(), propertyName = argNodes[0].value, propertyType = getProxyPropertyType(widgetType, propertyName);
     argNodes[0]._tabris = {"type" : "tabris_Proxy_get", "proxyType" : widgetType};
-    if (propertyType) return propertyType.getType();
+    if (propertyType || propertyType.isEmpty()) return propertyType.getType();
       return infer.ANull;
   });
 
