@@ -627,6 +627,10 @@
           "elevation" : {
             "!type" : "number",
             "!doc" : "The position of the widget on the x-axis. Currently only supported on Android 5.0+."
+          },
+          "cornerRadius" : {
+            "!type" : "number",
+            "!doc" : "Configure a widget to have rounded corners. Each corner is affected equally. Supported on iOS and Android 5.0+."
           }
         },
         "ButtonProperties" : {
