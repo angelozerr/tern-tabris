@@ -1660,15 +1660,33 @@
           "!guess-type": "tabrisCreate_guessType"
         }
       },
-      "app": {
-        "!type": "+types.App"
-      },
-      "device": {
-        "!type": "+types.Device"
-      },
-      "ui": {
-        "!type": "+types.UI"
-      }
+      "app": {"!type": "+types.App"},
+      "device": {"!type": "+types.Device"},
+      "ui": {"!type": "+types.UI"},
+      "Action": {"!type": "types.Action"},
+      "ActivityIndicator": {"!type": "types.ActivityIndicator"},
+      "Page": {"!type": "types.Page"},
+      "Button": {"!type": "types.Button"},
+      "TextView": {"!type": "types.TextView"},
+      "TextInput": {"!type": "types.TextInput"},
+      "CheckBox": {"!type": "types.CheckBox"},
+      "Switch": {"!type": "types.Switch"},
+      "CollectionView": {"!type": "types.CollectionView"},
+      "Picker": {"!type": "types.Picker"},
+      "PageSelector": {"!type": "types.PageSelector"},
+      "SearchAction": {"!type": "types.SearchAction"},
+      "Composite": {"!type": "types.Composite"},
+      "Canvas": {"!type": "types.Canvas"},
+      "Drawer": {"!type": "types.Drawer"},
+      "ImageView": {"!type": "types.ImageView"},
+      "ProgressBar": {"!type": "types.ProgressBar"},
+      "RadioButton": {"!type": "types.RadioButton"},
+      "TabFolder": {"!type": "types.TabFolder"},
+      "Tab": {"!type": "types.Tab"},
+      "ToggleButton": {"!type": "types.ToggleButton"},
+      "ScrollView": {"!type": "types.ScrollView"},
+      "Video": {"!type": "types.Video"},
+      "WebView": {"!type": "types.WebView"}
     },
     "setTimeout": {
       "!type": "fn(callback: fn(), delay: number, args?: ?) -> number",
