@@ -1299,6 +1299,10 @@
               "!type" : "fn() -> +types.Widget",
               "!doc" : "Returns the parent of this widget."
             },
+            "siblings" : {
+              "!type" : "fn(selector?: !propertyTypes.Selector) -> +types.WidgetCollection",
+              "!doc" : "Returns a (possibly empty) collection of all siblings of this widget that match the selector."
+            },
             "children" : {
               "!type" : "fn(selector?: !propertyTypes.Selector) -> +types.WidgetCollection",
               "!doc" : "Returns a (possibly empty) collection of all children of this widget that match the selector."
