@@ -538,7 +538,11 @@
         "WidgetProperties": {
           "class": {
             "!type" : "string",
-            "!doc" : "A string containing a whitespace separated list of \"classes\". A class is an arbitrary name for a state or category the widget should be identifiable by. It may only contain alphanumeric characters, \"_\" and \"-\"."
+            "!doc" : "A class name or a whitespace separated list of class names to identify the widget. Class names are arbitrary strings that describe a state or a category and help to select widgets using a selector expression. A class name may only contain alphanumeric characters, \"_\" and \"-\". Class names can also be added or removed using the field \"classList\"."
+          },
+          "classList": {
+            "!type" : "[string]",
+            "!doc" : "Provides convenient access to the list of class names set to this widget. Class names can either be set using the \"class\" property or by modifying the \"classList\" directly."
           },
           "id": {
             "!type" : "string",
@@ -666,6 +670,10 @@
             "!type" : "string",
             "!doc" : "The horizontal alignment of the text. Supported values: \"left\", \"right\", \"center\", default: \"left\"."
           },
+          "lineSpacing": {
+            "!type": "number",
+            "!doc": "The amount of space between each line of text. The \"lineSpacing\" property is a factor with a default value of \"1.0\"."
+          },
           "markupEnabled": {
             "!type": "bool",
             "!doc": "Allows for a subset of HTML tags in the label text. Supported tags are: \"a\", \"del\", \"ins\", \"b\", \"i\", \"strong\", \"em\", \"big\", \"small\", \"br\". All tags must be closed (e.g. use <br/> instead of <br>). Nesting tags is currently not supported. This property must be set in the \"create\" method. It cannot be changed after widget creation."
@@ -746,6 +754,10 @@
           }
         },
         "CollectionViewProperties": {
+          "columnCount" : {
+            "!type" : "number",
+            "!doc" : "The number of columns to display in the collection view. If set to a value \"n > 1\", each row will contain \"n\" items. The available space will be equally distributed between columns."
+          },
           "initializeCell" : {
             "!type" : "fn()",
             "!doc" : "A callback used to initialize a collection cell by attaching widget and \"change:item\" listener. Cells are created by the framework and recycled on scrolling. This callback receives the cell as the first and the cell type as second parameter."
@@ -809,6 +821,10 @@
           "scaleMode" : {
             "!type" : "string",
             "!doc" : "The scale mode of the image in the ImageView. Supported values: \"auto\", \"fit\", \"fill\", \"stretch\", \"none\", default: \"auto\""
+          },
+          "tintColor" : {
+            "!type" : "!propertyTypes.Color",
+            "!doc" : "A color to change the image appearance. All opaque parts of the image will be tinted with the given color. Set to \"null\" to remove the effect."
           }
         },
         "ProgressBarProperties": {
@@ -947,206 +963,211 @@
       "!events": {
         "AppEvents": {
           "pause": {
-            "!doc": "Fired before the application goes into hibernation."
+            "!doc": "Fired before the application goes into hibernation. Parameter: \"app\"."
           },
           "resume": {
-            "!doc": "Fired after the application returned from hibernation."
+            "!doc": "Fired after the application returned from hibernation. Parameter: \"app\"."
           },
           "backnavigation": {
-            "!doc": "Fired when the back button is pressed on Android. To suppress the default back navigation behavior, set \"options.preventDefault\" to \"true\". Parameters are: \"app\", \"options\"."
+            "!doc": "Fired when the back button is pressed on Android. To suppress the default back navigation behavior, call \"event.preventDefault()\". Parameters: \"app\", \"event\"."
           }
         },
         "UIEvents": {
           "change:activePage": {
-            "!doc": "Fired when the \"activePage\" property of tabris.ui changes."
+            "!doc": "Fired when the \"activePage\" property of tabris.ui changes. Parameters: \"ui\", \"page\", \"options\"."
           }
         },
         "DeviceEvents": {
           "change:orientation": {
-            "!doc": "Fired when the \"orientation\" property has changed and the rotation animation has finished."
+            "!doc": "Fired when the \"orientation\" property has changed and the rotation animation has finished. Parameters: \"device\", \"orientation\", \"options\"."
           }
         },
         "ActionEvents": {
           "select": {
-            "!doc": "Fired when the action is invoked. Gives the action as the first parameter."
+            "!doc": "Fired when the action is invoked. Parameter: \"widget\"."
           }
         },
         "WidgetEvents": {
           "animationstart": {
-            "!doc": "Fired when widget animation has been started."
+            "!doc": "Fired when widget animation has been started. Parameters: \"widget\", \"options\"."
           },
           "animationend": {
-            "!doc": "Fired when widget animation has ended."
+            "!doc": "Fired when widget animation has ended. Parameters: \"widget\", \"options\"."
           },
           "touchstart": {
-            "!doc": "Fired when a widget is touched."
+            "!doc": "Fired when a widget is touched. Parameters: \"widget\", \"gesture\"."
           },
           "touchmove": {
-            "!doc": "Fired repeatedly while swiping across the screen."
+            "!doc": "Fired repeatedly while swiping across the screen. Parameters: \"widget\", \"gesture\"."
           },
           "touchend": {
-            "!doc": "Fired when a touch ends on the same widget than it started on."
+            "!doc": "Fired when a touch ends on the same widget than it started on. Parameters: \"widget\", \"gesture\"."
           },
           "touchcancel": {
-            "!doc": "Fired instead of touchend when the touch ends on another widget than it started on."
+            "!doc": "Fired instead of touchend when the touch ends on another widget than it started on. Parameters: \"widget\", \"gesture\"."
           },
           "longpress": {
-            "!doc": "Fired after pressing a widget for a specific amount of time (about a second)."
+            "!doc": "Fired after pressing a widget for a specific amount of time (about a second). Parameters: \"widget\", \"gesture\"."
           },
           "resize": {
-            "!doc": "Fired when the widget's size has changed. You can use this event to apply new layoutData."
+            "!doc": "Fired when the widget's size has changed. You can use this event to apply new layoutData. Parameters: \"widget\", \"bounds\", \"options\"."
           },
           "dispose": {
-            "!doc": "Fired when the widget is about to be disposed."
+            "!doc": "Fired when the widget is about to be disposed. Parameter: \"widget\"."
           },
           "pan": {
-            "!doc": "Fired when a finger starts moving in the widget."
+            "!doc": "Fired when a finger starts moving in the widget. Parameters: \"widget\", \"gesture\"."
           },
           "pan:left": {
-            "!doc": "Fired when a finger starts moving left in the widget."
+            "!doc": "Fired when a finger starts moving left in the widget. Parameters: \"widget\", \"gesture\"."
           },
           "pan:up": {
-            "!doc": "Fired when a finger starts moving up in the widget."
+            "!doc": "Fired when a finger starts moving up in the widget. Parameters: \"widget\", \"gesture\"."
           },
           "pan:right": {
-            "!doc": "Fired when a finger starts moving right in the widget."
+            "!doc": "Fired when a finger starts moving right in the widget. Parameters: \"widget\", \"gesture\"."
           },
           "pan:down": {
-            "!doc": "Fired when a finger starts moving down in the widget."
+            "!doc": "Fired when a finger starts moving down in the widget. Parameters: \"widget\", \"gesture\"."
           },
           "swipe:left": {
-            "!doc": "Fired when a finger moves left quickly."
+            "!doc": "Fired when a finger moves left quickly. Parameters: \"widget\", \"gesture\"."
           },
           "swipe:up": {
-            "!doc": "Fired when a finger moves up quickly."
+            "!doc": "Fired when a finger moves up quickly. Parameters: \"widget\", \"gesture\"."
           },
           "swipe:right": {
-            "!doc": "Fired when a finger moves right quickly."
+            "!doc": "Fired when a finger moves right quickly. Parameters: \"widget\", \"gesture\"."
           },
           "swipe:down": {
-            "!doc": "Fired when a finger moves down quickly."
+            "!doc": "Fired when a finger moves down quickly. Parameters: \"widget\", \"gesture\"."
           },
           "tap": {
-            "!doc": "Fired when a widget is tapped."
+            "!doc": "Fired when a widget is tapped. Parameters: \"widget\", \"gesture\"."
           },
         },
         "ButtonEvents": {
           "select": {
-            "!doc": "Fired when the button is pressed.  Gives the button as the first parameter."
+            "!doc": "Fired when the button is pressed. Parameter: \"widget\"."
           }
         },
         "CheckBoxEvents": {
           "change:selection": {
-            "!doc": "Fired when the check box is checked or unchecked."
+            "!doc": "Fired when the check box is checked or unchecked. Parameters: \"widget\", \"selection\", \"options\"."
           },
           "select": {
-            "!doc": "Fired when the check box is checked or unchecked. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the check box is checked or unchecked. Parameters: \"widget\", \"selection\", \"options\"."
+          }
+        },
+        "ImageViewEvents": {
+          "load": {
+            "!doc": "Fired when the image loading has finished. The event parameter contains information about the loading process. Parameters: \"widget\", \"{error: boolean}\"."
           }
         },
         "SwitchEvents": {
           "change:selection": {
-            "!doc": "Fired when the selection property changes. Parameters are: \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the selection property changes. Parameters: \"widget\", \"selection\", \"options\"."
           },
           "select": {
-            "!doc": "Fired when the switch is toggled by the user. Parameters are: \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the switch is toggled by the user. Parameters: \"widget\", \"selection\", \"options\"."
           }
         },
         "CollectionViewEvents": {
           "select": {
-            "!doc": "Fired when a collection item is selected. Parameters are: \"collectionView\", \"item\", \"{index: number}\""
+            "!doc": "Fired when a collection item is selected. Parameters: \"collectionView\", \"item\", \"{index: number}\""
           },
           "refresh": {
-            "!doc": "Fired when the user requested a refresh. An event listener should reset the \"refreshIndicator\" property when refresh is finished."
+            "!doc": "Fired when the user requested a refresh. An event listener should reset the \"refreshIndicator\" property when refresh is finished. Parameter: \"widget\"."
           },
           "scroll": {
-            "!doc": "Fired while the collection view is scrolling. Parameters are: \"collectionView\", \"event\". The event contains the scroll delta of this scroll event: \"{deltaX: number, deltaY: number}\". The value of \"deltaY\" will be positive when scrolling up and negative when scrolling down."
+            "!doc": "Fired while the collection view is scrolling. Parameters: \"collectionView\", \"{deltaX: number, deltaY: number}\". The event contains the scroll delta of this scroll event: \"{deltaX: number, deltaY: number}\". The value of \"deltaY\" will be positive when scrolling up and negative when scrolling down."
           }
         },
         "CompositeEvents": {
           "addchild": {
-            "!doc": "Fired when a child is added. Parameters are: \"collectionView\", \"child\", \"options\""
+            "!doc": "Fired when a child is added. Parameters: \"widget\", \"child\", \"options\""
           },
           "removechild": {
-            "!doc": "Fired when a child is removed. Parameters are: \"collectionView\", \"child\", \"{index: number}\""
+            "!doc": "Fired when a child is removed. Parameters: \"widget\", \"child\", \"{index: number}\""
           }
         },
         "RadioButtonEvents": {
           "change:selection": {
-            "!doc": "Fired when the selection property changes."
+            "!doc": "Fired when the selection property changes. Parameters: \"widget\", \"selection\", \"options\"."
           },
           "select": {
-            "!doc": "Fired when the radio button is selected or deselected. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the radio button is selected or deselected. Parameters: \"widget\", \"selection\", \"options\"."
           }
         },
         "SearchActionEvents": {
           "accept": {
-            "!doc": "Fired when a text input has been submitted by pressing the keyboard's search key. The current query text will be given as the second parameter."
+            "!doc": "Fired when a text input has been submitted by pressing the keyboard's search key. Parameters: \"widget\", \"text\", \"options\"."
           },
           "input": {
-            "!doc": "Fired when the user inputs text. The current query text will be given as the second parameter."
+            "!doc": "Fired when the user inputs text. Parameters: \"widget\", \"text\", \"options\"."
           }
         },
         "SliderEvents": {
           "change:selection": {
-            "!doc": "Fired when the selection property changes."
+            "!doc": "Fired when the selection property changes. Parameters: \"widget\", \"selection\", \"options\"."
           },
           "select": {
-            "!doc": "Fired when the selection property is changed by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the selection property is changed by the user. Parameters: \"widget\", \"selection\", \"options\"."
           }
         },
         "TabFolderEvents": {
           "change:selection": {
-            "!doc": "Fired when the selection of the slider gets changed."
+            "!doc": "Fired when the selection of the slider gets changed. Parameters: \"widget\", \"selection\", \"options\"."
           },
           "select": {
-            "!doc": "Fired when the selection property changes by user interaction. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the selection property changes by user interaction. Parameters: \"widget\", \"selection\", \"options\"."
           }
         },
         "TextInputEvents": {
           "accept": {
-            "!doc": "Fired when a text input has been finished by pressing the keyboard's Enter key. The label of this key may vary depending on the platform and locale. The second parameter contains the widgets text."
+            "!doc": "Fired when a text input has been finished by pressing the keyboard's Enter key. The label of this key may vary depending on the platform and locale. Parameters: \"widget\", \"text\", \"options\"."
           },
           "blur": {
-            "!doc": "Fired when the widget lost focus."
+            "!doc": "Fired when the widget lost focus. Parameter: \"widget\"."
           },
           "change:text": {
-            "!doc": "Fired when the text property changes, either by \"set\" or by the user."
+            "!doc": "Fired when the text property changes, either by \"set\" or by the user. Parameters: \"widget\", \"text\", \"options\"."
           },
           "focus": {
-            "!doc": "Fired when the widget gains focus."
+            "!doc": "Fired when the widget gains focus. Parameter: \"widget\"."
           },
           "input": {
-            "!doc": "Fired when the text changed by the user. Parameters are the same as in change:text, i.e. \"widget\", \"text\", \"options\"."
+            "!doc": "Fired when the text changed by the user. Parameters: \"widget\", \"text\", \"options\"."
           }
         },
         "ToggleButtonEvents": {
           "change:selection": {
-            "!doc": "Fired when the selection property changes."
+            "!doc": "Fired when the selection property changes. Parameters: \"widget\", \"selection\", \"options\"."
           },
           "select": {
-            "!doc": "Fired when the toggle button is selected or deselected by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when the toggle button is selected or deselected by the user. Parameters: \"widget\", \"selection\", \"options\"."
           }
         },
         "PageEvents": {
           "appear": {
-            "!doc": "Fired when the page is about to become visible, i.e. it has become the active page."
+            "!doc": "Fired when the page is about to become visible, i.e. it has become the active page. Parameter: \"widget\"."
           },
           "resize": {
-            "!doc": "Fired when the page's size has changed. You can use this event to apply new layoutData."
+            "!doc": "Fired when the page's size has changed. You can use this event to apply new layoutData. Parameters: \"widget\", \"bounds\", \"options\"."
           },
           "disappear": {
-            "!doc": "Fired when the page is no longer visible, i.e. another page has become the active page."
+            "!doc": "Fired when the page is no longer visible, i.e. another page has become the active page. Parameter: \"widget\"."
           }
         },
         "PickerEvents": {
           "change:selectionIndex": {
-            "!doc": "Fired when the selectionIndex property changes."
+            "!doc": "Fired when the selectionIndex property changes. Parameters: \"widget\", \"selectionIndex\", \"options\"."
           },
           "change:selection": {
-            "!doc": "Fired when the selection property changes. The index of the selected item is given in the options object as \"index\"."
+            "!doc": "Fired when the selection property changes. The index of the selected item is given in the options object as \"index\". Parameters: \"widget\", \"selection\", \"options\"."
           },
           "select": {
-            "!doc": "Fired when an item was selected by the user. Parameters are the same as in \"change:selection\", i.e. \"widget\", \"selection\", \"options\"."
+            "!doc": "Fired when an item was selected by the user. Parameters: \"widget\", \"selection\", \"{index: number}\"."
           }
         },
         "ScrollViewEvents": {
@@ -1156,7 +1177,7 @@
         },
         "WebViewEvents": {
           "load": {
-            "!doc": "Fired when the url has been loaded. Parameters: \"widget\"."
+            "!doc": "Fired when the url has been loaded. Parameter: \"widget\"."
           },
           "navigate": {
             "!doc": "Fired when the WebView is about to navigate to a new URL. Listeners can intercept the navigation by calling \"event.preventDefault()\". Parameters: \"widget\", \"event\"."
@@ -1187,7 +1208,7 @@
           "!type": "fn()",
           "!doc": "The object \"tabris.ui\" is the root element for all widgets. This is the parent for all top-level pages, actions and the drawer.",
           "prototype" : {
-            "!proto" : "types.Proxy.prototype"
+            "!proto" : "types.Widget.prototype"
           }
         },
         "Device": {
@@ -1235,9 +1256,9 @@
               }
             },
             "on": {
-              "!type" : "fn(type: string, listener: fn()) -> !this",
+              "!type" : "fn(type: string, listener: fn(), context?: ?) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype", "call !1 this=!this" ],
-              "!doc" : "Adds a listener to the list of functions to be notified when event is fired. Supports chaining.",
+              "!doc" : "Adds a listener to the list of functions to be notified when event is fired. If the context parameter is not present, the listener will be called in the context of this object. Supports chaining.",
               "!url" : "https://tabrisjs.com/documentation/1.7/api/Events#onevent-listener-context",
               "!data": {
                 "!lint": "tabrisEvent_lint"
@@ -1268,7 +1289,7 @@
           "prototype" : {
             "!proto": "types.Proxy.prototype",
             "apply" : {
-              "!type" : "fn(properties: ?)",
+              "!type" : "fn(properties: ?) -> !this",
               "!doc" : "Applies the given properties to all descendants that match the associated selector(s). \"properties\" is an object in the format \"{Selector: {property: value, property: value, ... }, Selector: ...}\"."
             },
             "id" : {
@@ -1314,7 +1335,7 @@
             "trigger" : {
               "!type" : "fn(type?: string, param?: ?) -> !this",
               "!effects" : [ "custom tabris_Proxy_eventtype"],
-              "!doc" : "Programmatically invokes all listeners for the given event type with a given set of parameters. Returns the widget itself.",
+              "!doc" : "Triggers an event of the given type. All registered listeners will be notified. Additional parameters will be passed to the listeners.",
               "!data": {
                 "!lint": "tabrisEvent_lint"
               }
@@ -1508,7 +1529,7 @@
             "!proto" : "types.Widget.prototype",
             "append" : {
               "!type" : "fn(widget: +types.Widget, widget?: +types.Widget)",
-              "!doc" : "Adds the given widget(s) in the given order to the composite."
+              "!doc" : "Adds the given widgets to the composite."
             },
           }
         },
@@ -1611,7 +1632,7 @@
         "TabFolder" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/1.7/api/TabFolder",
-          "!doc" : "A widget that can switch between tabs.",
+          "!doc" : "A widget that can switch between tabs. Only children of type \"Tab\" are supported. Since the TabFolder does not compute its own size, the width and height must be defined by the respective layout properties (e.g. either \"width\" or \"left\" and \"right\" must be specified).",
           "prototype" : {
             "!proto" : "types.Widget.prototype"
           }
@@ -1635,7 +1656,7 @@
         "ScrollView" : {
           "!type" : "fn()",
           "!url": "https://tabrisjs.com/documentation/1.7/api/ScrollView",
-          "!doc" : "A composite that allows its content to overflow either vertically (default) or horizontally. Children of a ScrollView may not be attached to its edge in scrolling direction (to the bottom for vertical scrolling, to the right for horizontal scrolling).",
+          "!doc" : "A composite that allows its content to overflow either vertically (default) or horizontally. Since the ScrollView does not compute its own size, the width and height must be defined by the respective layout properties (e.g. either \"width\" or \"left\" and \"right\" must be specified).",
           "prototype" : {
             "!proto" : "types.Composite.prototype"
           }
@@ -1697,13 +1718,13 @@
       "WebView": {"!type": "types.WebView"}
     },
     "setTimeout": {
-      "!type": "fn(callback: fn(), delay: number, args?: ?) -> number",
-      "!doc": "Calls the given function with \"args\" (and all following parameters) after the specified delay. The actual delay may be slightly longer than the given one. Returns \"timeoutID\".",
+      "!type": "fn(callback: fn(), delay: number, args?: ?) -> ?",
+      "!doc": "Calls the given function with \"args\" (and all following parameters) after the specified delay. The actual delay may be slightly longer than the given one.",
       "!url": "https://tabrisjs.com/documentation/1.7/w3c-api"
     },
     "setInterval": {
-      "!type": "fn(callback: fn(), delay: number, args?: ?) -> number",
-      "!doc": "Calls the given function with \"args\" (and all following parameters) repeatedly, each time waiting the given delay. The actual delay may be slightly longer than the given one. Returns \"intervalID\".",
+      "!type": "fn(callback: fn(), delay: number, args?: ?) -> ?",
+      "!doc": "Calls the given function with \"args\" (and all following parameters) repeatedly, each time waiting the given delay. The actual delay may be slightly longer than the given one.",
       "!url": "https://tabrisjs.com/documentation/1.7/w3c-api"
     },
     "clearTimeout": {
